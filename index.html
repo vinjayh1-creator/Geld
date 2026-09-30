@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Budget Planner">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#f7f8fa">
 <meta name="theme-color" content="#0f172a">
 <title>Budget Planner</title>
 <script src="https://unpkg.com/lucide@latest"></script>
@@ -24,6 +29,55 @@ main{margin-left:245px;width:calc(100% - 245px);padding:28px;max-width:1500px}.m
 @media(max-width:950px){.cards{grid-template-columns:repeat(2,1fr)}.section-grid{grid-template-columns:1fr}.quick-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){aside{display:none}.app{display:block}main{margin:0;width:100%;padding:16px 14px 88px}.mobile-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.mobile-head .brand{padding:0;font-size:18px}.topbar{display:block}.topbar h1{font-size:23px}.month-nav{margin-top:12px}.cards{grid-template-columns:1fr 1fr;gap:10px}.card{padding:14px;border-radius:13px}.stat-value{font-size:19px}.table{min-width:650px}.bottom-nav{position:fixed;display:grid;grid-template-columns:repeat(5,1fr);bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);z-index:20;padding:7px 4px}.bottom-nav button{border:0;background:transparent;color:var(--muted);font-size:10px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px}.bottom-nav button.active{color:var(--primary)}.form-grid{grid-template-columns:1fr}.site-controls{align-items:flex-start;flex-direction:column}}
 @media(min-width:701px){.bottom-nav{display:none}}
+/* iPhone / iOS Home Screen app compatibility */
+html {
+  min-height: 100%;
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+}
+button, input, select, textarea {
+  font: inherit;
+}
+@media(max-width:700px){
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  main {
+    padding-bottom: calc(98px + env(safe-area-inset-bottom));
+  }
+  .bottom-nav {
+    bottom: 0;
+    padding-top: 8px;
+    padding-right: 6px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    padding-left: 6px;
+    min-height: 62px;
+  }
+  .bottom-nav button {
+    min-width: 0;
+    min-height: 46px;
+    justify-content: center;
+    line-height: 1.15;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+  }
+  .bottom-nav button svg {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+  }
+  .mobile-head {
+    padding-top: max(0px, env(safe-area-inset-top));
+  }
+}
+
 
 /* Fintech visual refresh */
 :root{--primary:#2563eb;--soft:#eff6ff;--shadow:0 10px 32px rgba(15,23,42,.06)}
@@ -79,6 +133,13 @@ h1{letter-spacing:-.035em}
 .category-bar{height:7px;background:var(--border);border-radius:99px;overflow:hidden}
 .category-bar>div{height:100%;background:var(--primary);border-radius:99px}
 @media(max-width:850px){.recent-overview-grid{grid-template-columns:1fr}.category-overview{border-left:0;border-top:1px solid var(--border);padding-left:0;padding-top:18px}}
+
+/* Compacte spaarrekeningen-tegel */
+.section-grid > .card:first-child .account-list { gap: 8px; }
+.section-grid > .card:first-child .account { padding: 9px 10px; }
+.section-grid > .card:first-child .account-icon { width: 30px; height: 30px; }
+.section-grid > .card:first-child .amount { font-size: 14px; }
+.section-grid > .card:first-child .section-title { font-size: 14px; margin-bottom: 10px; }
 </style>
 </head>
 <body>
@@ -281,20 +342,6 @@ $("dashboard").innerHTML=`
 </div>
 <div class="section-grid">
 <div class="card"><div class="section-title">Spaarrekeningen</div><div class="account-list">${data.accounts.map(a=>`<div class="account"><div class="account-left"><div class="account-icon"><i data-lucide="${a.icon}"></i></div><div>${esc(a.name)}</div></div><div class="amount">${euro(a.balance)}</div></div>`).join("")}</div></div>
-<div class="card dealplug-dashboard-card">
-<div class="section-title"><span style="display:flex;align-items:center;gap:8px"><i data-lucide="shopping-bag"></i>DealPlugNL</span><span class="badge">Business</span></div>
-<div class="small">Overzicht van verkopen en kosten</div>
-<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:12px">
-<div><div class="small">Huidige stand</div><div class="stat-value ${dpBalance>=0?"positive":"negative"}" style="margin-top:3px">${euro(dpBalance)}</div></div>
-<div style="text-align:right"><div class="small">Resultaat</div><div class="${(dpIncome-dpCosts)>=0?"positive":"negative"}" style="font-size:16px;font-weight:650;margin-top:3px">${(dpIncome-dpCosts)>=0?"+":""}${euro(dpIncome-dpCosts)}</div></div>
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
-<div style="padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--soft)"><div class="small">Verkopen</div><div class="positive" style="font-weight:600;margin-top:3px">${euro(dpIncome)}</div></div>
-<div style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Kosten</div><div class="negative" style="font-weight:600;margin-top:3px">${euro(dpCosts)}</div></div>
-</div>
-<div style="margin-top:13px;height:6px;background:var(--border);border-radius:99px;overflow:hidden"><div style="height:100%;width:${dpIncome>0?Math.min(100,Math.max(0,(dpIncome-dpCosts)/dpIncome*100)):0}%;background:var(--primary);border-radius:99px"></div></div>
-<div class="small" style="margin-top:6px">Netto na kosten</div>
-</div>
 </div>
 <div class="card transactions"><div class="section-title">Snelle uitgave</div>
 <div class="quick-grid">
@@ -343,7 +390,20 @@ $("dashboard").innerHTML=`
     })()}
   </div>
 </div>
-</div>`;
+</div>
+<div class="card dealplug-dashboard-card">
+<div class="section-title"><span style="display:flex;align-items:center;gap:8px"><i data-lucide="shopping-bag"></i>DealPlugNL</span><span class="badge">Business</span></div>
+<div class="small">Overzicht van verkopen en kosten</div>
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:12px">
+<div><div class="small">Huidige stand</div><div class="stat-value ${dpBalance>=0?"positive":"negative"}" style="margin-top:3px">${euro(dpBalance)}</div></div>
+<div style="text-align:right"><div class="small">Resultaat</div><div class="${(dpIncome-dpCosts)>=0?"positive":"negative"}" style="font-size:16px;font-weight:650;margin-top:3px">${(dpIncome-dpCosts)>=0?"+":""}${euro(dpIncome-dpCosts)}</div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
+<div style="padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--soft)"><div class="small">Verkopen</div><div class="positive" style="font-weight:600;margin-top:3px">${euro(dpIncome)}</div></div>
+<div style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Kosten</div><div class="negative" style="font-weight:600;margin-top:3px">${euro(dpCosts)}</div></div>
+</div>
+<div style="margin-top:13px;height:6px;background:var(--border);border-radius:99px;overflow:hidden"><div style="height:100%;width:${dpIncome>0?Math.min(100,Math.max(0,(dpIncome-dpCosts)/dpIncome*100)):0}%;background:var(--primary);border-radius:99px"></div></div>
+<div class="small" style="margin-top:6px">Netto na kosten</div>`;
 $("dashboardAdd").onclick=()=>{setActiveView("transactions");setTimeout(()=>$("description")?.focus(),0)};
 document.querySelectorAll("[data-quick-expense]").forEach(btn=>btn.onclick=()=>{
 const category=btn.dataset.quickExpense;
