@@ -292,7 +292,7 @@ $("dashboard").innerHTML=`
 <div style="padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--soft)"><div class="small">Verkopen</div><div class="positive" style="font-weight:600;margin-top:3px">${euro(dpIncome)}</div></div>
 <div style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Kosten</div><div class="negative" style="font-weight:600;margin-top:3px">${euro(dpCosts)}</div></div>
 </div>
-<div style="margin-top:13px;height:6px;background:var(--border);border-radius:99px;overflow:hidden"><div style="height:100%;width="${dpIncome>0?Math.min(100,Math.max(0,(dpIncome-dpCosts)/dpIncome*100)):0}%;background:var(--primary);border-radius:99px"></div></div>
+<div style="margin-top:13px;height:6px;background:var(--border);border-radius:99px;overflow:hidden"><div style="height:100%;width:${dpIncome>0?Math.min(100,Math.max(0,(dpIncome-dpCosts)/dpIncome*100)):0}%;background:var(--primary);border-radius:99px"></div></div>
 <div class="small" style="margin-top:6px">Netto na kosten</div>
 </div>
 </div>
@@ -343,7 +343,7 @@ $("dashboard").innerHTML=`
     })()}
   </div>
 </div>
-</div>
+</div>`;
 $("dashboardAdd").onclick=()=>{setActiveView("transactions");setTimeout(()=>$("description")?.focus(),0)};
 document.querySelectorAll("[data-quick-expense]").forEach(btn=>btn.onclick=()=>{
 const category=btn.dataset.quickExpense;
