@@ -166,21 +166,43 @@ function save(){localStorage.setItem('moneyDashboard',JSON.stringify(state))}
 function euro(n){return new Intl.NumberFormat('nl-NL',{style:'currency',currency:'EUR'}).format(n)}
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function showPage(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');render()}
+function parseAmount(value){
+  const normalized=String(value ?? '').trim().replace(',', '.');
+  return normalized === '' ? NaN : Number(normalized);
+}
+
 function addAccount(){
- let name=document.getElementById('aname').value.trim(),type=document.getElementById('atype').value,opening=Number(document.getElementById('abal').value);
- if(!name||isNaN(opening)){alert('Vul een naam en beginstand in.');return}
- state.accounts.push({id:Date.now(),name,type,opening});save();document.getElementById('aname').value='';document.getElementById('abal').value='';render();
+  const name=document.getElementById('aname').value.trim();
+  const type=document.getElementById('atype').value;
+  const opening=parseAmount(document.getElementById('abal').value);
+
+  if(!name || !Number.isFinite(opening) || opening < 0){
+    alert('Vul een naam en een geldig bedrag in.');
+    return;
+  }
+
+  state.accounts.push({
+    id:Date.now()+Math.random(),
+    name,
+    type,
+    opening
+  });
+
+  save();
+  document.getElementById('aname').value='';
+  document.getElementById('abal').value='';
+  render();
 }
 function deleteAccount(id){if(state.accounts.length<=1){alert('Er moet minimaal één rekening blijven bestaan.');return}if(confirm('Rekening verwijderen?')){state.accounts=state.accounts.filter(a=>a.id!==id);save();render()}}
 function addTx(){
- let date=tdate.value,desc=tdesc.value.trim(),type=ttype.value,cat=tcat.value,amount=Number(tamount.value);
+ let date=tdate.value,desc=tdesc.value.trim(),type=ttype.value,cat=tcat.value,amount=parseAmount(tamount.value);
  if(!date||!desc||!amount||amount<0){alert('Vul alle gegevens in.');return}
  if(date<start){alert('Deze administratie begint op 1 oktober 2026.');return}
  state.tx.push({id:Date.now()+Math.random(),date,desc,type,cat,amount});save();tdesc.value='';tamount.value='';render();
 }
 function deleteTx(id){state.tx=state.tx.filter(x=>x.id!==id);save();render()}
 function transfer(){
- let from=Number(document.getElementById('from').value),to=Number(document.getElementById('to').value),amount=Number(document.getElementById('transferAmount').value),date=document.getElementById('transferDate').value;
+ let from=Number(document.getElementById('from').value),to=Number(document.getElementById('to').value),amount=parseAmount(document.getElementById('transferAmount').value),date=document.getElementById('transferDate').value;
  if(from===to||!amount||amount<0||!date){alert('Kies twee verschillende rekeningen en vul een bedrag in.');return}
  if(date<start){alert('Deze administratie begint op 1 oktober 2026.');return}
  state.transfers.push({id:Date.now()+Math.random(),from,to,amount,date});save();document.getElementById('transferAmount').value='';render();
@@ -223,7 +245,7 @@ function fillTransferSelects(){
 function renderOverview(){
  let names=['Okt','Nov','Dec'],ms=[10,11,12],vals=ms.map(totalsForMonth),max=Math.max(1,...vals.map(x=>Math.max(x.inc,x.exp)));
  document.getElementById('bars').innerHTML=vals.map((x,i)=>`<div class="barcol"><div class="barval">${euro(x.net)}</div><div class="bar" style="height:${Math.max(3,(x.inc-x.exp)/max*130)}px"></div><b>${names[i]}</b></div>`).join('');
- document.getElementById('monthRows').innerHTML=ms.map((m,i)=>{let x=vals[i];return `<tr><td>${['','', '', ''][0]||['','','',''][0]}${months[m-1]}</td><td class="right green">${euro(x.inc)}</td><td class="right red">${euro(x.exp)}</td><td class="right purple">${euro(x.sav)}</td><td class="right"><b>${euro(x.net)}</b></td></tr>`}).join('');
+ document.getElementById('monthRows').innerHTML=ms.map((m,i)=>{let x=vals[i];return `<tr><td>${months[m-1]}</td><td class="right green">${euro(x.inc)}</td><td class="right red">${euro(x.exp)}</td><td class="right purple">${euro(x.sav)}</td><td class="right"><b>${euro(x.net)}</b></td></tr>`}).join('');
 }
 const months=['','Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
 render();
@@ -266,7 +288,7 @@ function updateSuggestedCategory(){
 }
 
 function quickAdd(){
- let amount=Number(document.getElementById('quickAmount').value),desc=document.getElementById('quickDesc').value.trim(),type=document.getElementById('quickType').value;
+ let amount=parseAmount(document.getElementById('quickAmount').value),desc=document.getElementById('quickDesc').value.trim(),type=document.getElementById('quickType').value;
  if(!amount||amount<0||!desc){alert('Vul een bedrag en omschrijving in.');return}
  let cat=document.getElementById('quickCategory').value || suggestCategory(desc,type);
  state.tx.push({id:Date.now()+Math.random(),date:new Date().toISOString().slice(0,10)<start?start:new Date().toISOString().slice(0,10),desc,type,cat,amount});
