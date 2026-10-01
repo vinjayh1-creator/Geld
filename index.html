@@ -896,6 +896,17 @@ html,body,#root,.app{
 }
 </style>
 
+
+<style id="dashboard-revolut-toggle-v41">
+.dashboard-revolut-toggle{
+  cursor:pointer;
+  transition:background .15s ease,transform .15s ease;
+}
+.dashboard-revolut-toggle:hover{background:var(--soft);transform:translateY(-1px)}
+.dashboard-revolut-toggle:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+#dashboardRevolutDetails{background:var(--soft);border-radius:0 0 10px 10px}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1085,6 +1096,15 @@ setActiveView(activeView);
 lucide.createIcons();
 }
 
+function valForDashboard(type,snapshot){
+  if(type==="private"){
+    const subs=snapshot?.revolutSubaccounts;
+    if(subs && Object.prototype.hasOwnProperty.call(subs,"private")) return Number(subs.private||0);
+    return Number(snapshot?.acc4||0);
+  }
+  return 0;
+}
+
 function renderDashboard(){
 const ts=monthTransactions();
 const income=ts.filter(t=>t.kind==="income").reduce((s,t)=>s+Number(t.amount),0);
@@ -1118,7 +1138,15 @@ $("dashboard").innerHTML=`
 <div class="section-grid">
 <div class="card"><div class="section-title">Rekeningen</div><div class="small" style="margin-bottom:9px">Stand ${dashboardSnapshotLabel}</div><div class="account-list">
 <div class="account"><div class="account-left"><div class="account-icon"><i data-lucide="landmark"></i></div><div>ABN Amro</div></div><div class="amount">${protectedEuro(dashboardSnapshot.acc1||0)}</div></div>
-<div class="account"><div class="account-left"><div class="account-icon"><i data-lucide="wallet"></i></div><div>Revolut</div></div><div class="amount">${protectedEuro(revolutTotal(dashboardSnapshot))}</div></div>
+<div class="account dashboard-revolut-toggle" id="dashboardRevolutToggle" role="button" tabindex="0" aria-expanded="false">
+<div class="account-left"><div class="account-icon"><i data-lucide="wallet"></i></div><div><strong>Revolut</strong><div class="small">Klik om rekeningen te bekijken</div></div></div>
+<div style="display:flex;align-items:center;gap:6px"><div class="amount">${protectedEuro(revolutTotal(dashboardSnapshot))}</div><i data-lucide="chevron-right" id="dashboardRevolutChevron" style="width:16px;height:16px"></i></div>
+</div>
+<div id="dashboardRevolutDetails" style="display:none;padding:0 10px 10px 48px">
+  <div class="small" style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)"><span>Revolut privé</span><strong>${protectedEuro(valForDashboard("private",dashboardSnapshot))}</strong></div>
+  <div class="small" style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)"><span>DealPlugNL</span><strong>${protectedEuro(Number(dashboardSnapshot.revolutSubaccounts?.dealplug||0))}</strong></div>
+  <div class="small" style="display:flex;justify-content:space-between;padding:7px 0"><span>Crypto / Aandelen</span><strong>${protectedEuro(Number(dashboardSnapshot.revolutSubaccounts?.crypto||0))}</strong></div>
+</div>
 </div>
 ${(()=>{
   const currentTotal=Number(dashboardSnapshot.acc1||0)+revolutTotal(dashboardSnapshot);
