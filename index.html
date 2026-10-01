@@ -1952,7 +1952,7 @@ function processWeeklySalary(){
   });
   acc.balance+=amount;
   data.processedRecurring[key]=true;
-  save();
+  persist();
 }
 
 function downloadBackup(){
