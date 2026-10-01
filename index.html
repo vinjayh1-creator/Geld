@@ -775,6 +775,16 @@ html,body,#root,.app{
   max-width:100%;
   overflow-x:hidden;
 }
+
+/* Dashboard kleurcorrectie: bovenste 4 tegels neutraal, DealPlugNL neutraal */
+#dashboard > .cards > .card{background:var(--card);color:var(--text);}
+#dashboard > .cards > .card .stat-label{color:var(--muted);}
+#dashboard > .cards > .card .stat-value{color:var(--text);}
+#dashboard > .cards > .card .stat-value.positive{color:var(--green);}
+#dashboard > .cards > .card .stat-value.negative{color:var(--red);}
+.dealplug-dashboard-card{background:var(--card) !important;color:var(--text);}
+.dealplug-dashboard-card .dealplug-sales-box{background:var(--card) !important;}
+.dashboard-revolut-summary strong{font-weight:500;}
 </style>
 
 
@@ -959,6 +969,36 @@ html,body,#root,.app{
   @media(max-width:700px){
     .dashboard-recurring-summary > div:nth-child(3){grid-template-columns:1fr !important}
   }
+</style>
+
+<style id="premium-fintech-theme">
+/* Premium Fintech theme — visual only */
+:root{
+  --bg:#f5f7fb;--card:#ffffff;--text:#172033;--muted:#718096;--border:#e6eaf0;
+  --primary:#2563eb;--soft:#eef4ff;--green:#059669;--red:#dc2626;
+  --shadow:0 6px 24px rgba(15,23,42,.045);
+}
+[data-theme="dark"]{
+  --bg:#0b1220;--card:#111a2b;--text:#f5f7fb;--muted:#9aa7ba;--border:#263247;
+  --primary:#60a5fa;--soft:#172554;--green:#34d399;--red:#f87171;
+  --shadow:0 8px 28px rgba(0,0,0,.22);
+}
+body{background:var(--bg);}
+aside{background:var(--card);box-shadow:6px 0 26px rgba(15,23,42,.025);}
+.card{border-radius:18px;box-shadow:var(--shadow);}
+.card:hover{box-shadow:0 9px 28px rgba(15,23,42,.07);}
+.stat-value{font-weight:500;letter-spacing:-.035em;}
+.section-title{letter-spacing:-.02em;}
+nav button.active{background:var(--soft);color:var(--primary);}
+.account-icon,.quick-btn:hover,.bottom-nav button.active{background:var(--soft);}
+.btn.primary{background:var(--primary);border-color:var(--primary);}
+.progress>div,.category-bar>div{background:var(--primary);}
+.badge{background:var(--soft);color:var(--primary);}
+.field input:focus,.field select:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 12%,transparent);}
+@media(max-width:700px){
+  .card{border-radius:16px;box-shadow:0 5px 18px rgba(15,23,42,.04);}
+  .bottom-nav{backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);}
+}
 </style>
 </head>
 <body>
@@ -1274,7 +1314,7 @@ ${(()=>{
 <div style="text-align:right"><div class="small">Resultaat</div><div class="${(dpIncome-dpCosts)>=0?"positive":"negative"}" style="font-size:16px;font-weight:650;margin-top:3px">${(dpIncome-dpCosts)>=0?"+":""}${protectedEuro(dpIncome-dpCosts)}</div></div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
-<div style="padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--soft)"><div class="small">Verkopen</div><div class="positive" style="font-weight:600;margin-top:3px">${protectedEuro(dpIncome)}</div></div>
+<div class="dealplug-sales-box" style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Verkopen</div><div class="positive" style="font-weight:600;margin-top:3px">${protectedEuro(dpIncome)}</div></div>
 <div style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Kosten</div><div class="negative" style="font-weight:600;margin-top:3px">${protectedEuro(dpCosts)}</div></div>
 </div>
 <div style="margin-top:13px;height:6px;background:var(--border);border-radius:99px;overflow:hidden"><div style="height:100%;width:${dpIncome>0?Math.min(100,Math.max(0,(dpIncome-dpCosts)/dpIncome*100)):0}%;background:var(--primary);border-radius:99px"></div></div>
@@ -1290,18 +1330,20 @@ ${(()=>{
 </div>
 <div class="card dashboard-recurring-summary">
   <div class="section-title"><span style="display:flex;align-items:center;gap:8px"><i data-lucide="repeat"></i>Terugkerende kosten & loon</span></div>
-  <div class="small">Je vaste maandelijkse uitgaven en ingestelde loon.</div>
+  <div class="small">Je vaste maandelijkse uitgaven en je loon.</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px">
-    <div style="padding:11px;border:1px solid var(--border);border-radius:12px;background:var(--soft)">
-      <div class="small">Terugkerende kosten</div>
+    <div style="padding:11px;border:1px solid var(--border);border-radius:12px;background:var(--card)">
+      <div class="small">Vaste kosten per maand</div>
       <div class="negative" style="font-size:18px;font-weight:650;margin-top:4px">${(()=>{const monthly=data.recurring.filter(r=>r.kind==="expense").reduce((s,r)=>s+Number(r.amount||0),0); return protectedEuro(monthly)})()}</div>
-      <div class="small" style="margin-top:3px">1× per maand</div>
     </div>
     <div style="padding:11px;border:1px solid var(--border);border-radius:12px">
       <div class="small">Loon</div>
       <div class="positive" style="font-size:18px;font-weight:650;margin-top:4px">${(()=>{if(!data.weeklySalary?.enabled)return "Niet ingesteld"; const week=Math.min(5,Math.ceil(new Date().getDate()/7)); return protectedEuro(Number(data.weeklySalary.amount||0)*week)})()}</div>
-      <div class="small" style="margin-top:3px">${data.weeklySalary?.enabled?`opgelopen t/m week ${Math.min(5,Math.ceil(new Date().getDate()/7))}`:"Stel je loon in bij Terugkerend"}</div>
     </div>
+  </div>
+  <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:11px">
+    <div class="small" style="margin-bottom:7px">Mijn vaste kosten</div>
+    ${(()=>{const fixed=data.recurring.filter(r=>r.kind==="expense").sort((a,b)=>Number(a.day||0)-Number(b.day||0)); return fixed.length ? fixed.map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)"><div style="min-width:0"><div style="font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.description||"Vaste kosten")}</div><div class="small">${esc(r.category||"Overig")} · dag ${Number(r.day||0)}</div></div><div class="negative" style="font-weight:600;white-space:nowrap">${protectedEuro(r.amount||0)}</div></div>`).join("") : `<div class="empty">Nog geen vaste kosten ingesteld.</div>`})()}
   </div>
 </div>
 <div class="finance-insight-grid">
@@ -2117,6 +2159,27 @@ render();
 init();
 </script>
 </body>
+
+<style id="dashboard-recurring-expanded">
+.dashboard-recurring-summary{overflow:hidden;}
+.dashboard-recurring-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:14px;}
+.dashboard-recurring-metric{padding:11px;border:1px solid var(--border);border-radius:12px;background:var(--card);min-width:0;}
+.dashboard-recurring-metric>div:nth-child(2){font-size:18px;font-weight:650;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dashboard-recurring-metric>span{display:block;font-size:10px;color:var(--muted);margin-top:3px;line-height:1.3;}
+.dashboard-recurring-list{margin-top:14px;border-top:1px solid var(--border);padding-top:12px;}
+.dashboard-recurring-list-title{font-size:12px;font-weight:650;margin-bottom:7px;}
+.dashboard-recurring-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.dashboard-recurring-row:last-child{border-bottom:0;}
+.dashboard-recurring-row strong{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dashboard-recurring-row span{display:block;color:var(--muted);font-size:10px;margin-top:2px;}
+.dashboard-recurring-row>div:last-child{font-weight:650;white-space:nowrap;}
+.dealplug-sales-box{background:var(--card)!important;}
+@media(max-width:700px){
+ .dashboard-recurring-metrics{grid-template-columns:1fr 1fr;gap:8px;}
+ .dashboard-recurring-metric>div:nth-child(2){font-size:16px;}
+ .dashboard-recurring-row{padding:9px 0;}
+}
+</style>
 </html>
 
 <style id="mobile-bottom-nav-v60">
@@ -2190,4 +2253,8 @@ init();
     max-height:50px !important;
   }
 }
+</style>
+
+<style>
+@media(max-width:700px){.dashboard-recurring-summary > div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr 1fr !important;gap:8px !important}.dashboard-recurring-summary{overflow:hidden}}
 </style>
