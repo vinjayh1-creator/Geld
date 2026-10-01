@@ -1169,8 +1169,9 @@ const accountStand=hasDashboardSnapshot
 // De handmatige rekeningstand zelf blijft ongewijzigd door transacties.
 const cash=accountStand+(income-expenses);
 const net=income-expenses;
-const dpIncome=data.dealplug.entries.filter(e=>e.kind==="income").reduce((s,e)=>s+Number(e.amount),0);
-const dpCosts=data.dealplug.entries.filter(e=>e.kind==="expense").reduce((s,e)=>s+Number(e.amount),0);
+const dealplugEntries=Array.isArray(data.dealplug?.entries)?data.dealplug.entries:[];
+const dpIncome=dealplugEntries.filter(e=>e.kind==="income").reduce((s,e)=>s+Number(e.amount||0),0);
+const dpCosts=dealplugEntries.filter(e=>e.kind==="expense"||e.kind==="cost"||e.kind==="kosten").reduce((s,e)=>s+Number(e.amount||0),0);
 const dpBalance=Number(data.dealplug.opening)+dpIncome-dpCosts;
 const recent=[...ts].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,6);
 
@@ -1958,8 +1959,8 @@ document.querySelectorAll("[data-budget-delete]").forEach(b=>b.onclick=()=>{if(c
 
 function renderDealPlug(){
 const entries=[...data.dealplug.entries].sort((a,b)=>new Date(b.date)-new Date(a.date));
-const income=entries.filter(e=>e.kind==="income").reduce((s,e)=>s+Number(e.amount),0);
-const costs=entries.filter(e=>e.kind==="expense").reduce((s,e)=>s+Number(e.amount),0);
+const income=entries.filter(e=>e.kind==="income").reduce((s,e)=>s+Number(e.amount||0),0);
+const costs=entries.filter(e=>e.kind==="expense"||e.kind==="cost"||e.kind==="kosten").reduce((s,e)=>s+Number(e.amount||0),0);
 const balance=Number(data.dealplug.opening)+income-costs;
 $("dealplug").innerHTML=`
 <div class="topbar"><div><h1>DealPlugNL</h1><div class="subtitle">Inkomsten en kosten van je abonnementen</div></div></div>
