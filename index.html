@@ -907,6 +907,34 @@ html,body,#root,.app{
 #dashboardRevolutDetails{background:var(--soft);border-radius:0 0 10px 10px}
 </style>
 
+
+<style id="dashboard-revolut-native-v43">
+.dashboard-revolut-details{width:100%;margin:0;padding:0}
+.dashboard-revolut-details>summary{list-style:none}
+.dashboard-revolut-details>summary::-webkit-details-marker{display:none}
+.dashboard-revolut-summary{cursor:pointer}
+.dashboard-revolut-summary:hover{background:var(--soft)}
+.dashboard-revolut-summary .revolut-summary-chevron{
+  width:16px;height:16px;
+  transition:transform .15s ease;
+}
+.dashboard-revolut-details[open] .revolut-summary-chevron{transform:rotate(90deg)}
+.dashboard-revolut-details-inner{
+  padding:0 10px 8px 48px;
+  background:var(--soft);
+  border-radius:0 0 10px 10px;
+}
+.dashboard-subrow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:8px 0;
+  border-bottom:1px solid var(--border);
+}
+.dashboard-subrow:last-child{border-bottom:0}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1138,15 +1166,17 @@ $("dashboard").innerHTML=`
 <div class="section-grid">
 <div class="card"><div class="section-title">Rekeningen</div><div class="small" style="margin-bottom:9px">Stand ${dashboardSnapshotLabel}</div><div class="account-list">
 <div class="account"><div class="account-left"><div class="account-icon"><i data-lucide="landmark"></i></div><div>ABN Amro</div></div><div class="amount">${protectedEuro(dashboardSnapshot.acc1||0)}</div></div>
-<div class="account dashboard-revolut-toggle" id="dashboardRevolutToggle" role="button" tabindex="0" aria-expanded="false">
+<details class="dashboard-revolut-details">
+<summary class="account dashboard-revolut-summary">
 <div class="account-left"><div class="account-icon"><i data-lucide="wallet"></i></div><div><strong>Revolut</strong><div class="small">Klik om rekeningen te bekijken</div></div></div>
-<div style="display:flex;align-items:center;gap:6px"><div class="amount">${protectedEuro(revolutTotal(dashboardSnapshot))}</div><i data-lucide="chevron-right" id="dashboardRevolutChevron" style="width:16px;height:16px"></i></div>
+<div style="display:flex;align-items:center;gap:6px"><div class="amount">${protectedEuro(revolutTotal(dashboardSnapshot))}</div><i data-lucide="chevron-right" class="revolut-summary-chevron"></i></div>
+</summary>
+<div class="dashboard-revolut-details-inner">
+  <div class="small dashboard-subrow"><span>Revolut privé</span><strong>${protectedEuro(valForDashboard("private",dashboardSnapshot))}</strong></div>
+  <div class="small dashboard-subrow"><span>DealPlugNL</span><strong>${protectedEuro(Number(dashboardSnapshot.revolutSubaccounts?.dealplug||0))}</strong></div>
+  <div class="small dashboard-subrow"><span>Crypto / Aandelen</span><strong>${protectedEuro(Number(dashboardSnapshot.revolutSubaccounts?.crypto||0))}</strong></div>
 </div>
-<div id="dashboardRevolutDetails" style="display:none;padding:0 10px 10px 48px">
-  <div class="small" style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)"><span>Revolut privé</span><strong>${protectedEuro(valForDashboard("private",dashboardSnapshot))}</strong></div>
-  <div class="small" style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)"><span>DealPlugNL</span><strong>${protectedEuro(Number(dashboardSnapshot.revolutSubaccounts?.dealplug||0))}</strong></div>
-  <div class="small" style="display:flex;justify-content:space-between;padding:7px 0"><span>Crypto / Aandelen</span><strong>${protectedEuro(Number(dashboardSnapshot.revolutSubaccounts?.crypto||0))}</strong></div>
-</div>
+</details>
 </div>
 ${(()=>{
   const currentTotal=Number(dashboardSnapshot.acc1||0)+revolutTotal(dashboardSnapshot);
@@ -1227,16 +1257,7 @@ ${(()=>{
 <div style="margin-top:13px;height:6px;background:var(--border);border-radius:99px;overflow:hidden"><div style="height:100%;width:${dpIncome>0?Math.min(100,Math.max(0,(dpIncome-dpCosts)/dpIncome*100)):0}%;background:var(--primary);border-radius:99px"></div></div>
 <div class="small" style="margin-top:6px">Netto na kosten</div>
 </div>
-<div class="finance-insight-grid">
-  <div class="card"><div class="section-title">Maandoverzicht</div>
-    <div class="subscription-grid">
-      <div><div class="small">Beginstand rekeningen</div><div class="subscription-total">${protectedEuro(accountStand)}</div></div>
-      <div><div class="small">Netto deze maand</div><div class="subscription-total ${net>=0?"positive":"negative"}">${protectedEuro(net)}</div></div>
-      <div><div class="small">Eindstand incl. transacties</div><div class="subscription-total">${protectedEuro(cash)}</div></div>
-      <div><div class="small">Spaarquote</div><div class="subscription-total">${income>0?Math.round(Math.max(0,net)/income*100):0}%</div></div>
-    </div>
-  </div>
-  <div class="card"><div class="section-title">Financiële samenvatting</div>
+<div class="card"><div class="section-title">Financiële samenvatting</div>
     <div class="finance-summary">
       <div class="finance-summary-item"><i data-lucide="wallet"></i><div><strong>${net>=0?"Je houdt deze maand geld over":"Je geeft deze maand meer uit dan er binnenkomt"}</strong><span>${net>=0?`${protectedEuro(net)} netto over na je uitgaven.`:`Je maandelijkse uitgaven liggen ${protectedEuro(Math.abs(net))} boven je inkomsten.`}</span></div></div>
       <div class="finance-summary-item"><i data-lucide="landmark"></i><div><strong>Rekeningstand</strong><span>${protectedEuro(accountStand)} staat opgeslagen voor ${dashboardSnapshotLabel}.</span></div></div>
@@ -1272,28 +1293,6 @@ const updateAmountVisibilityButtons=()=>{
   });
   lucide.createIcons();
 
-const dashboardRevolutToggle=$("dashboardRevolutToggle");
-const dashboardRevolutDetails=$("dashboardRevolutDetails");
-const dashboardRevolutChevron=$("dashboardRevolutChevron");
-
-if(dashboardRevolutToggle && dashboardRevolutDetails){
-  const toggleDashboardRevolut=()=>{
-    const isOpen=dashboardRevolutDetails.style.display==="block";
-    dashboardRevolutDetails.style.display=isOpen?"none":"block";
-    dashboardRevolutToggle.setAttribute("aria-expanded",String(!isOpen));
-    if(dashboardRevolutChevron){
-      dashboardRevolutChevron.setAttribute("data-lucide",isOpen?"chevron-right":"chevron-down");
-      lucide.createIcons();
-    }
-  };
-  dashboardRevolutToggle.onclick=toggleDashboardRevolut;
-  dashboardRevolutToggle.onkeydown=(event)=>{
-    if(event.key==="Enter" || event.key===" "){
-      event.preventDefault();
-      toggleDashboardRevolut();
-    }
-  };
-}
 };
 const toggleAllAmounts=()=>{
   amountsVisible=!amountsVisible;
