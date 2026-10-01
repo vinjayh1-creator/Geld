@@ -798,6 +798,25 @@ html,body,#root,.app{
 }
 </style>
 
+
+<style id="account-change-indicator">
+.account-change{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  margin-top:7px;
+  font-size:11px;
+  font-weight:600;
+}
+.account-change.up{color:var(--green)}
+.account-change.down{color:var(--red)}
+.account-change.flat{color:var(--muted)}
+.account-change svg{width:13px;height:13px;stroke-width:2.2}
+@media(max-width:700px){
+  .account-change{font-size:10px}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1014,7 +1033,27 @@ $("dashboard").innerHTML=`
 <div class="card"><div class="section-title">Rekeningen</div><div class="small" style="margin-bottom:9px">Stand ${dashboardSnapshotLabel}</div><div class="account-list">
 <div class="account"><div class="account-left"><div class="account-icon"><i data-lucide="landmark"></i></div><div>ABN Amro</div></div><div class="amount">${protectedEuro(dashboardSnapshot.acc1||0)}</div></div>
 <div class="account"><div class="account-left"><div class="account-icon"><i data-lucide="wallet"></i></div><div>Revolut</div></div><div class="amount">${protectedEuro(dashboardSnapshot.acc4||0)}</div></div>
-</div></div>
+</div>
+${(()=>{
+  const currentTotal=Number(dashboardSnapshot.acc1||0)+Number(dashboardSnapshot.acc4||0);
+  const previousDate=new Date(currentMonth);
+  previousDate.setMonth(previousDate.getMonth()-1);
+  const previousKey=monthKey(previousDate);
+  const previousSnapshot=data.accountSnapshots?.[previousKey];
+  if(!previousSnapshot){
+    return '<div class="account-change flat"><i data-lucide="minus"></i><span>Geen vorige maand beschikbaar</span></div>';
+  }
+  const previousTotal=Number(previousSnapshot.acc1||0)+Number(previousSnapshot.acc4||0);
+  const difference=currentTotal-previousTotal;
+  if(difference>0){
+    return `<div class="account-change up"><i data-lucide="trending-up"></i><span>${protectedEuro(difference)} meer dan vorige maand</span></div>`;
+  }
+  if(difference<0){
+    return `<div class="account-change down"><i data-lucide="trending-down"></i><span>${protectedEuro(Math.abs(difference))} minder dan vorige maand</span></div>`;
+  }
+  return '<div class="account-change flat"><i data-lucide="minus"></i><span>Gelijk aan vorige maand</span></div>';
+})()}
+</div>
 </div>
 <div class="card transactions"><div class="section-title">Snelle uitgave</div>
 <div class="quick-grid">
