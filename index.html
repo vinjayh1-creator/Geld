@@ -956,6 +956,9 @@ html,body,#root,.app{
   #dashboard .section-grid{gap:12px;margin-top:12px}
   #dashboard .transactions{margin-top:12px}
 }
+  @media(max-width:700px){
+    .dashboard-recurring-summary > div:nth-child(3){grid-template-columns:1fr !important}
+  }
 </style>
 </head>
 <body>
@@ -1284,6 +1287,22 @@ ${(()=>{
       <div class="finance-summary-item"><i data-lucide="wallet"></i><div><strong>${net>=0?"Je houdt deze maand geld over":"Je geeft deze maand meer uit dan er binnenkomt"}</strong><span>${net>=0?`${protectedEuro(net)} netto over na je uitgaven.`:`Je maandelijkse uitgaven liggen ${protectedEuro(Math.abs(net))} boven je inkomsten.`}</span></div></div>
       <div class="finance-summary-item"><i data-lucide="landmark"></i><div><strong>Rekeningstand</strong><span>${protectedEuro(accountStand)} staat opgeslagen voor ${dashboardSnapshotLabel}.</span></div></div>
       <div class="finance-summary-item"><i data-lucide="piggy-bank"></i><div><strong>Spaardoelen</strong><span>${data.goals.length?`${data.goals.length} spaardoel${data.goals.length===1?"":"en"} actief.`:"Nog geen spaardoelen ingesteld."}</span></div></div>
+    </div>
+  </div>
+</div>
+<div class="card dashboard-recurring-summary">
+  <div class="section-title"><span style="display:flex;align-items:center;gap:8px"><i data-lucide="repeat"></i>Terugkerende kosten & loon</span></div>
+  <div class="small">Je vaste maandelijkse uitgaven en ingestelde loon.</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px">
+    <div style="padding:11px;border:1px solid var(--border);border-radius:12px;background:var(--soft)">
+      <div class="small">Terugkerende kosten</div>
+      <div class="negative" style="font-size:18px;font-weight:650;margin-top:4px">${protectedEuro(data.recurring.filter(r=>r.kind==="expense").reduce((s,r)=>s+Number(r.amount||0),0))}</div>
+      <div class="small" style="margin-top:3px">per maand</div>
+    </div>
+    <div style="padding:11px;border:1px solid var(--border);border-radius:12px">
+      <div class="small">Loon</div>
+      <div class="positive" style="font-size:18px;font-weight:650;margin-top:4px">${data.weeklySalary?.enabled?protectedEuro(data.weeklySalary.amount||0):"Niet ingesteld"}</div>
+      <div class="small" style="margin-top:3px">${data.weeklySalary?.enabled?"per week":"Stel je loon in bij Terugkerend"}</div>
     </div>
   </div>
 </div>
