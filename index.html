@@ -1393,14 +1393,14 @@ ${(()=>{
   </div>
 <div class="card dashboard-crypto-pokemon-card dashboard-full-tile">
 <div class="section-title"><span style="display:flex;align-items:center;gap:8px"><i data-lucide="bitcoin"></i>Crypto/Pokemon</span><span class="badge">Investeringen</span></div>
-<div class="small">Overzicht van je crypto en Pokémon investeringen</div>
+<div class="small">Overzicht van het geld dat momenteel in crypto en Pokémon zit</div>
 <div class="dashboard-investment-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
-<div style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Crypto</div><div style="font-size:18px;font-weight:500;margin-top:3px">${protectedEuro(dashboardCryptoOpen)}</div><div class="small" style="margin-top:3px">${dashboardCryptoResult>=0?"Resultaat +"+protectedEuro(dashboardCryptoResult):"Resultaat "+protectedEuro(dashboardCryptoResult)}</div></div>
-<div style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Pokemon</div><div style="font-size:18px;font-weight:500;margin-top:3px">${protectedEuro(dashboardPokemonOpen)}</div><div class="small" style="margin-top:3px">${dashboardPokemonResult>=0?"Resultaat +"+protectedEuro(dashboardPokemonResult):"Resultaat "+protectedEuro(dashboardPokemonResult)}</div></div>
+<div style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Crypto in portefeuille</div><div style="font-size:18px;font-weight:500;margin-top:3px">${protectedEuro(dashboardCryptoOpen)}</div></div>
+<div style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Pokemon in portefeuille</div><div style="font-size:18px;font-weight:500;margin-top:3px">${protectedEuro(dashboardPokemonOpen)}</div></div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);gap:10px">
 <div><div class="small">Totale inleg</div><div style="font-weight:500;margin-top:3px">${protectedEuro(dashboardCryptoInvested+dashboardPokemonInvested)}</div></div>
-<div style="text-align:right"><div class="small">Totaal resultaat</div><div class="${dashboardCryptoResult+dashboardPokemonResult>=0?"positive":"negative"}" style="font-weight:600;margin-top:3px">${dashboardCryptoResult+dashboardPokemonResult>=0?"+":""}${protectedEuro(dashboardCryptoResult+dashboardPokemonResult)}</div></div>
+<div style="text-align:right"><div class="small">Uitgecasht / verkocht</div><div style="font-weight:500;margin-top:3px">${protectedEuro(dashboardCryptoCashouts+dashboardPokemonCashouts)}</div></div>
 </div>
 </div>
 <div class="card dealplug-dashboard-card dashboard-full-tile">
