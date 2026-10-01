@@ -885,6 +885,17 @@ html,body,#root,.app{
 }
 </style>
 
+
+<style id="revolut-subaccounts-v40">
+.revolut-main-row:hover{background:var(--soft);border-radius:9px;padding-left:6px;padding-right:6px}
+.revolut-main-row strong{font-weight:650}
+#revolutSubaccounts{border-bottom:1px solid var(--border);padding-bottom:7px}
+@media(max-width:700px){
+  .revolut-main-row{padding-top:9px;padding-bottom:9px}
+  #revolutSubaccounts{padding-left:12px}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1082,7 +1093,7 @@ const dashboardSnapshotKey=monthKey(currentMonth);
 const dashboardSnapshot=data.accountSnapshots?.[dashboardSnapshotKey]||{};
 const hasDashboardSnapshot=Object.prototype.hasOwnProperty.call(dashboardSnapshot,"acc1")||Object.prototype.hasOwnProperty.call(dashboardSnapshot,"acc4");
 const accountStand=hasDashboardSnapshot
-  ? Number(dashboardSnapshot.acc1||0)+Number(dashboardSnapshot.acc4||0)
+  ? Number(dashboardSnapshot.acc1||0)+revolutTotal(dashboardSnapshot)
   : data.accounts.reduce((s,a)=>s+Number(a.balance),0);
 // Beschikbaar geld = opgeslagen maandstand + inkomsten - uitgaven.
 // De handmatige rekeningstand zelf blijft ongewijzigd door transacties.
@@ -1107,10 +1118,10 @@ $("dashboard").innerHTML=`
 <div class="section-grid">
 <div class="card"><div class="section-title">Rekeningen</div><div class="small" style="margin-bottom:9px">Stand ${dashboardSnapshotLabel}</div><div class="account-list">
 <div class="account"><div class="account-left"><div class="account-icon"><i data-lucide="landmark"></i></div><div>ABN Amro</div></div><div class="amount">${protectedEuro(dashboardSnapshot.acc1||0)}</div></div>
-<div class="account"><div class="account-left"><div class="account-icon"><i data-lucide="wallet"></i></div><div>Revolut</div></div><div class="amount">${protectedEuro(dashboardSnapshot.acc4||0)}</div></div>
+<div class="account"><div class="account-left"><div class="account-icon"><i data-lucide="wallet"></i></div><div>Revolut</div></div><div class="amount">${protectedEuro(revolutTotal(dashboardSnapshot))}</div></div>
 </div>
 ${(()=>{
-  const currentTotal=Number(dashboardSnapshot.acc1||0)+Number(dashboardSnapshot.acc4||0);
+  const currentTotal=Number(dashboardSnapshot.acc1||0)+revolutTotal(dashboardSnapshot);
   const previousDate=new Date(currentMonth);
   previousDate.setMonth(previousDate.getMonth()-1);
   const previousKey=monthKey(previousDate);
@@ -1118,7 +1129,7 @@ ${(()=>{
   if(!previousSnapshot){
     return '<div class="account-change flat"><i data-lucide="minus"></i><span>Geen vorige maand beschikbaar</span></div>';
   }
-  const previousTotal=Number(previousSnapshot.acc1||0)+Number(previousSnapshot.acc4||0);
+  const previousTotal=Number(previousSnapshot.acc1||0)+revolutTotal(previousSnapshot);
   const difference=currentTotal-previousTotal;
   if(difference>0){
     return `<div class="account-change up"><i data-lucide="trending-up"></i><span>${protectedEuro(difference)} meer dan vorige maand</span></div>`;
@@ -1386,44 +1397,47 @@ data.transactions=data.transactions.filter(x=>x.id!==tid);saveAndRender();
 
 let selectedSnapshotMonth="";
 
+function revolutSubTotal(snapshot){
+  const subs=snapshot?.revolutSubaccounts||{};
+  return Number(subs.dealplug||0)+Number(subs.crypto||0);
+}
+function revolutTotal(snapshot){
+  return Number(snapshot?.acc4||0)+revolutSubTotal(snapshot);
+}
+
 function renderAccounts(){
 const months=[];
-const startDate=new Date(2026,8,1); // eerste stand: 1-09-2026
+const startDate=new Date(2026,8,1);
 const now=new Date();
 const current=new Date(now.getFullYear(),now.getMonth(),1);
-
-// Vanaf 1-09-2026 tonen we iedere maand vooruit.
 const endDate=new Date(Math.max(startDate.getTime(),current.getTime()));
 endDate.setMonth(endDate.getMonth()+12);
-
-for(let d=new Date(startDate);d<=endDate;d.setMonth(d.getMonth()+1)){
-  months.push(new Date(d));
-}
+for(let d=new Date(startDate);d<=endDate;d.setMonth(d.getMonth()+1)) months.push(new Date(d));
 
 const key=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
 const label=d=>`1-${String(d.getMonth()+1).padStart(2,"0")}`;
 const val=(k,id)=>Number(data.accountSnapshots?.[k]?.[id]||0);
-const accounts=[["acc1","ABN Amro"],["acc4","Revolut"]];
+const subVal=(k,id)=>Number(data.accountSnapshots?.[k]?.revolutSubaccounts?.[id]||0);
+const accounts=[["acc1","ABN Amro"]];
 
-// Standaard alleen de huidige beschikbare maand tonen.
-// Zolang de kalenderdatum vóór september 2026 ligt, gebruiken we 1-09-2026 als eerste beschikbare maand.
 const currentKey=key(new Date(Math.max(startDate.getTime(),current.getTime())));
-if(!selectedSnapshotMonth || !months.some(d=>key(d)===selectedSnapshotMonth)){
-  selectedSnapshotMonth=currentKey;
-}
+if(!selectedSnapshotMonth || !months.some(d=>key(d)===selectedSnapshotMonth)) selectedSnapshotMonth=currentKey;
 
 const selectedIndex=months.findIndex(d=>key(d)===selectedSnapshotMonth);
 const selectedDate=months[selectedIndex];
 const selectedKey=key(selectedDate);
 const prev=selectedIndex>0?months[selectedIndex-1]:null;
-const total=accounts.reduce((sum,a)=>sum+val(selectedKey,a[0]),0);
-const prevTotal=prev?accounts.reduce((sum,a)=>sum+val(key(prev),a[0]),0):0;
+const total=val(selectedKey,"acc1")+revolutTotal(data.accountSnapshots?.[selectedKey]);
+const prevTotal=prev?(val(key(prev),"acc1")+revolutTotal(data.accountSnapshots?.[key(prev)])):0;
+const cryptoTarget=Number(data.cryptoMonthlyTarget||500);
+const cryptoBalance=subVal(selectedKey,"crypto");
+const cryptoProgress=cryptoTarget>0?Math.min(100,(cryptoBalance/cryptoTarget)*100):0;
 
 $("accounts").innerHTML=`
 <div class="topbar"><div><h1>Rekeningen</h1><div class="subtitle">Maandelijkse standen</div></div></div>
 <div class="card account-snapshots-card">
 <div class="section-title">Stand per maand</div>
-<div class="small" style="margin-bottom:10px">Kies een maand. Alleen de geselecteerde maand wordt weergegeven.</div>
+<div class="small" style="margin-bottom:10px">Kies een maand en leg je rekeningstanden vast.</div>
 <div class="field" style="margin-bottom:12px">
 <label>Maand</label>
 <select id="snapshotMonthSelect">
@@ -1433,10 +1447,43 @@ ${months.map(d=>`<option value="${key(d)}" ${key(d)===selectedKey?"selected":""}
 <div class="account-snapshot-list">
 <div class="snapshot-month">
 <div class="snapshot-month-head"><strong>${label(selectedDate)}</strong><span class="small">${selectedDate.toLocaleDateString("nl-NL",{month:"long",year:"numeric"})}</span></div>
+
 ${accounts.map(a=>`<div class="snapshot-row"><span>${a[1]}</span><div class="snapshot-input-wrap"><span>€</span><input type="number" min="0" step="0.01" inputmode="decimal" data-snapshot-month="${selectedKey}" data-snapshot-account="${a[0]}" value="${val(selectedKey,a[0])||""}" placeholder="0,00"></div></div>`).join("")}
+
+<div class="revolut-main-row" data-revolut-toggle style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;cursor:pointer;border-top:1px solid var(--border);margin-top:6px">
+  <div style="display:flex;align-items:center;gap:8px">
+    <i data-lucide="chevron-right" id="revolutChevron" style="width:16px;height:16px"></i>
+    <strong>Revolut</strong>
+    <span class="small">meerdere rekeningen</span>
+  </div>
+  <strong>${euro(revolutTotal(data.accountSnapshots?.[selectedKey]))}</strong>
+</div>
+
+<div id="revolutSubaccounts" style="display:none;padding:2px 0 4px 24px">
+  <div class="snapshot-row">
+    <span>Revolut privé</span>
+    <div class="snapshot-input-wrap"><span>€</span><input type="number" min="0" step="0.01" inputmode="decimal" data-snapshot-month="${selectedKey}" data-snapshot-subaccount="private" value="${val(selectedKey,"acc4")||""}" placeholder="0,00"></div>
+  </div>
+  <div class="snapshot-row">
+    <span>DealPlugNL</span>
+    <div class="snapshot-input-wrap"><span>€</span><input type="number" min="0" step="0.01" inputmode="decimal" data-snapshot-month="${selectedKey}" data-snapshot-subaccount="dealplug" value="${subVal(selectedKey,"dealplug")||""}" placeholder="0,00"></div>
+  </div>
+  <div class="snapshot-row">
+    <div>
+      <strong>Crypto / Aandelen</strong>
+      <div class="small">Doelinleg €${cryptoTarget.toFixed(0)} per maand</div>
+    </div>
+    <div class="snapshot-input-wrap"><span>€</span><input type="number" min="0" step="0.01" inputmode="decimal" data-snapshot-month="${selectedKey}" data-snapshot-subaccount="crypto" value="${cryptoBalance||""}" placeholder="0,00"></div>
+  </div>
+  <div style="margin:5px 0 3px;height:5px;background:var(--border);border-radius:99px;overflow:hidden">
+    <div style="width:${cryptoProgress}%;height:100%;background:var(--primary);border-radius:99px"></div>
+  </div>
+  <div class="small">€${cryptoBalance.toFixed(2)} van €${cryptoTarget.toFixed(2)} maanddoel</div>
+</div>
+
 <button type="button" class="btn primary snapshot-save-btn" id="saveSnapshotBtn" style="margin-top:10px;width:100%">Opslaan</button>
 <div class="snapshot-total"><span>Totaal</span><strong>${euro(total)}</strong></div>
-${prev?`<div class="snapshot-diff"><span>Verschil</span><strong class="${total-prevTotal>=0?"positive":"negative"}">${total-prevTotal>=0?"+":""}${euro(total-prevTotal)}</strong></div>`:""}
+${prev?`<div class="snapshot-diff"><span>Verschil t.o.v. vorige maand</span><strong class="${total-prevTotal>=0?"positive":"negative"}">${total-prevTotal>=0?"+":""}${euro(total-prevTotal)}</strong></div>`:""}
 </div>
 </div></div>`;
 
@@ -1445,26 +1492,42 @@ $("snapshotMonthSelect").onchange=()=>{
   renderAccounts();
 };
 
+const revolutToggle=document.querySelector("[data-revolut-toggle]");
+const revolutSubaccounts=document.getElementById("revolutSubaccounts");
+const revolutChevron=document.getElementById("revolutChevron");
+if(revolutToggle && revolutSubaccounts){
+  revolutToggle.onclick=()=>{
+    const open=revolutSubaccounts.style.display!=="none";
+    revolutSubaccounts.style.display=open?"none":"block";
+    if(revolutChevron){
+      revolutChevron.setAttribute("data-lucide",open?"chevron-right":"chevron-down");
+      lucide.createIcons();
+    }
+  };
+}
+
 $("saveSnapshotBtn").onclick=()=>{
-  const saveButton=$("saveSnapshotBtn");
-  const inputs=document.querySelectorAll("[data-snapshot-month]");
   const monthToSave=selectedSnapshotMonth;
-  if(!monthToSave){
-    notify("Kies eerst een maand.");
-    return;
-  }
+  if(!monthToSave){notify("Kies eerst een maand.");return;}
 
   data.accountSnapshots=data.accountSnapshots||{};
   data.accountSnapshots[monthToSave]=data.accountSnapshots[monthToSave]||{};
+  const snap=data.accountSnapshots[monthToSave];
 
-  inputs.forEach(input=>{
-    const id=input.dataset.snapshotAccount;
+  document.querySelectorAll("[data-snapshot-account]").forEach(input=>{
     const raw=String(input.value||"").replace(",", ".").trim();
     const value=raw===""?0:Number(raw);
-    data.accountSnapshots[monthToSave][id]=Number.isFinite(value)?value:0;
+    snap[input.dataset.snapshotAccount]=Number.isFinite(value)?value:0;
   });
 
-  // Laat het dashboard direct dezelfde maand tonen als de zojuist opgeslagen stand.
+  snap.revolutSubaccounts=snap.revolutSubaccounts||{};
+  document.querySelectorAll("[data-snapshot-subaccount]").forEach(input=>{
+    const raw=String(input.value||"").replace(",", ".").trim();
+    const value=raw===""?0:Number(raw);
+    const id=input.dataset.snapshotSubaccount;
+    snap.revolutSubaccounts[id]=Number.isFinite(value)?value:0;
+  });
+
   const parts=monthToSave.split("-").map(Number);
   if(parts.length===2 && Number.isFinite(parts[0]) && Number.isFinite(parts[1])){
     currentMonth=new Date(parts[0],parts[1]-1,1);
@@ -1472,7 +1535,7 @@ $("saveSnapshotBtn").onclick=()=>{
 
   persist();
   render();
-  notify("Stand opgeslagen en dashboard bijgewerkt.");
+  notify("Rekeningstanden opgeslagen en dashboard bijgewerkt.");
 };
 lucide.createIcons();
 }
