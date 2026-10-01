@@ -834,6 +834,57 @@ html,body,#root,.app{
 @media(max-width:700px){.finance-insight-grid{gap:12px;margin-top:12px}.finance-chart{height:155px}.finance-chart-bars{height:108px}.subscription-grid{grid-template-columns:1fr}.goal-form-grid{grid-template-columns:1fr}.calendar-item{padding:8px}.calendar-date{min-width:64px}.finance-summary-item{padding:9px}}
 </style>
 
+
+<style id="mobile-bottom-nav-v39">
+@media(max-width:700px){
+  .bottom-nav{
+    display:flex !important;
+    overflow-x:auto;
+    overflow-y:hidden;
+    justify-content:flex-start;
+    gap:2px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding-left:6px !important;
+    padding-right:6px !important;
+  }
+  .bottom-nav::-webkit-scrollbar{display:none}
+  .bottom-nav button{
+    flex:0 0 72px;
+    width:72px;
+    min-width:72px;
+    max-width:72px;
+    min-height:46px;
+    padding:4px 3px !important;
+    white-space:normal;
+    font-size:9px !important;
+  }
+  .bottom-nav button:nth-child(4){
+    flex-basis:82px;
+    min-width:82px;
+    width:82px;
+    max-width:82px;
+  }
+  .bottom-nav button:nth-child(5){
+    flex-basis:76px;
+    min-width:76px;
+    width:76px;
+    max-width:76px;
+  }
+  .bottom-nav button svg{
+    width:19px !important;
+    height:19px !important;
+  }
+  .bottom-nav button span{
+    display:block;
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -892,11 +943,14 @@ html,body,#root,.app{
 </main>
 </div>
 <div class="bottom-nav">
-<button data-view="dashboard"><i data-lucide="layout-dashboard"></i>Home</button>
-<button data-view="transactions"><i data-lucide="arrow-left-right"></i>Transacties</button>
-<button data-view="accounts"><i data-lucide="landmark"></i>Rekeningen</button>
-<button data-view="crypto"><i data-lucide="bitcoin"></i>Crypto/Pokemon</button>
-<button data-view="dealplug"><i data-lucide="shopping-bag"></i>DealPlugNL</button>
+<button data-view="dashboard"><i data-lucide="layout-dashboard"></i><span>Home</span></button>
+<button data-view="transactions"><i data-lucide="arrow-left-right"></i><span>Transacties</span></button>
+<button data-view="accounts"><i data-lucide="landmark"></i><span>Rekeningen</span></button>
+<button data-view="crypto"><i data-lucide="bitcoin"></i><span>Crypto/Pokemon</span></button>
+<button data-view="dealplug"><i data-lucide="shopping-bag"></i><span>DealPlugNL</span></button>
+<button data-view="budgets"><i data-lucide="wallet-cards"></i><span>Budgetten</span></button>
+<button data-view="goals"><i data-lucide="target"></i><span>Doelen</span></button>
+<button data-view="recurring"><i data-lucide="repeat"></i><span>Vast</span></button>
 </div>
 
 <script>
