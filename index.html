@@ -2171,3 +2171,23 @@ init();
 }
 @media(min-width:701px){.bottom-nav{display:none !important;}}
 </style>
+<style id="standalone-nav-fix-v63">
+/* iPhone opgeslagen als app: geen ruimte reserveren voor een Safari URL-balk */
+@media (max-width:700px) and (display-mode: standalone){
+  main{padding-bottom:78px !important;}
+  .bottom-nav{
+    bottom:0 !important;
+    min-height:0 !important;
+    height:60px !important;
+    padding:5px 6px !important;
+    box-sizing:border-box !important;
+  }
+  .bottom-nav button,
+  .bottom-nav button:nth-child(4),
+  .bottom-nav button:nth-child(5){
+    height:50px !important;
+    min-height:50px !important;
+    max-height:50px !important;
+  }
+}
+</style>
