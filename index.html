@@ -50,13 +50,13 @@ button, input, select, textarea {
     padding-bottom: env(safe-area-inset-bottom);
   }
   main {
-    padding-bottom: calc(98px + env(safe-area-inset-bottom));
+    padding-bottom: calc(104px + env(safe-area-inset-bottom));
   }
   .bottom-nav {
-    bottom: 0;
+    bottom: calc(6px + env(safe-area-inset-bottom));
     padding-top: 8px;
     padding-right: 6px;
-    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    padding-bottom: 8px;
     padding-left: 6px;
     min-height: 62px;
   }
@@ -1407,6 +1407,33 @@ $("transactions").innerHTML=`
 <div class="field" id="transferField" style="display:none"><label>Geld naar</label><select id="transferTo">${data.accounts.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join("")}</select></div>
 </div>
 <div class="form-actions"><button class="btn primary" type="submit"><i data-lucide="plus"></i>Transactie toevoegen</button></div>
+
+<div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--border)">
+  <div class="section-title">Geld toevoegen aan Revolut</div>
+  <div class="small" style="margin-bottom:12px">Kies een Revolut-subrekening en voer zelf het bedrag in. Dit wordt toegevoegd aan de rekeningstand van de huidige maand en niet als gewone inkomsten geboekt.</div>
+  <div class="form-grid">
+    <div class="field">
+      <label>Revolut-rekening</label>
+      <select id="revolutAddTarget">
+        <option value="private">Revolut privé</option>
+        <option value="dealplug">DealPlugNL</option>
+        <option value="crypto">Crypto / Aandelen</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Bedrag (€)</label>
+      <input id="revolutAddAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Bijv. 500">
+    </div>
+    <div class="field">
+      <label>Opmerking</label>
+      <input id="revolutAdjustmentNote" type="text" maxlength="120" placeholder="Bijv. Geld naar privérekening">
+    </div>
+  </div>
+  <div class="form-actions">
+    <button type="button" class="btn primary" id="addRevolutAmount"><i data-lucide="plus"></i>Bedrag toevoegen</button>
+    <button type="button" class="btn" id="removeRevolutAmount"><i data-lucide="minus"></i>Bedrag afhalen</button>
+  </div>
+</div>
 </form></div>
 <div class="card transactions"><div class="section-title">Transacties</div>
 ${ts.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Omschrijving</th><th>Categorie</th><th>Datum</th><th>Rekening</th><th>Bedrag</th><th></th></tr></thead><tbody>${ts.map(t=>transactionRow(t,true)).join("")}</tbody></table></div>`:`<div class="empty">Nog geen transacties.</div>`}</div>`;
@@ -1443,8 +1470,56 @@ data.transactions.push({id:uid(),description,amount,date,category:$("category").
 }
 saveAndRender();
 };
+function changeRevolutSubaccountAmount(target, amount, direction, note){
+  const n=Number(amount);
+  if(!Number.isFinite(n)||n<=0){notify("Vul een geldig bedrag in.");return}
+  const month=monthKey(currentMonth);
+  data.accountSnapshots=data.accountSnapshots||{};
+  const snap=data.accountSnapshots[month]||(data.accountSnapshots[month]={});
+  snap.revolutSubaccounts=snap.revolutSubaccounts||{};
+  const label=target==="private"?"Revolut privé":target==="dealplug"?"DealPlugNL":"Crypto / Aandelen";
+  const current=target==="private"?Number(snap.acc4||0):Number(snap.revolutSubaccounts[target]||0);
+  const next=direction==="remove"?current-n:current+n;
+  if(next<0){notify(`Onvoldoende saldo op ${label}.`);return}
+  if(target==="private") {
+    snap.acc4=next;
+  } else {
+    snap.revolutSubaccounts[target]=next;
+  }
+  data.revolutAdjustments=data.revolutAdjustments||[];
+  data.revolutAdjustments.push({
+    id:uid(),
+    target,
+    amount:n,
+    direction,
+    note:String(note||"").trim(),
+    date:today(),
+    month
+  });
+  persist();
+  render();
+  notify(`${euro(n)} ${direction==="remove"?"afgehaald van":"toegevoegd aan"} ${label}.`);
+}
+
+$("addRevolutAmount").onclick=()=>{
+  changeRevolutSubaccountAmount($("revolutAddTarget").value,$("revolutAddAmount").value,"add",$("revolutAdjustmentNote").value);
+};
+$("removeRevolutAmount").onclick=()=>{
+  changeRevolutSubaccountAmount($("revolutAddTarget").value,$("revolutAddAmount").value,"remove",$("revolutAdjustmentNote").value);
+};
+document.querySelectorAll("[data-revolut-quick]").forEach(b=>b.onclick=()=>{
+  addRevolutSubaccountAmount(b.dataset.revolutQuick,500);
+});
 document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editTransaction(b.dataset.edit));
 document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteTransaction(b.dataset.delete));
+
+const adjustments=(data.revolutAdjustments||[]).filter(a=>a.month===monthKey(currentMonth)).sort((a,b)=>new Date(b.date)-new Date(a.date));
+if(adjustments.length){
+  const card=document.createElement("div");
+  card.className="card transactions";
+  card.innerHTML=`<div class="section-title">Revolut mutaties</div><div class="table-wrap"><table class="table"><thead><tr><th>Rekening</th><th>Datum</th><th>Opmerking</th><th>Bedrag</th></tr></thead><tbody>${adjustments.map(a=>{const label=a.target==="private"?"Revolut privé":a.target==="dealplug"?"DealPlugNL":"Crypto / Aandelen";return `<tr><td>${esc(label)}</td><td>${new Date(a.date).toLocaleDateString("nl-NL")}</td><td>${esc(a.note||"-")}</td><td class="${a.direction==="add"?"positive":"negative"}">${a.direction==="add"?"+":"-"}${euro(a.amount)}</td></tr>`}).join("")}</tbody></table></div>`;
+  $("transactions").appendChild(card);
+}
 }
 
 function editTransaction(tid){
