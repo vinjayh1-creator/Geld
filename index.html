@@ -1012,6 +1012,40 @@ nav button.active{background:var(--soft);color:var(--primary);}
 .brand-with-user > div{line-height:1.15;}
 .brand-user{font-size:11px;font-weight:500;color:var(--muted);margin-top:5px;letter-spacing:0;}
 </style>
+<style id="crypto-pokemon-summary">
+.crypto-pokemon-summary{margin-top:16px;}
+.crypto-pokemon-summary-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  margin-top:14px;
+}
+.crypto-pokemon-summary-item{
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px;
+  background:var(--card);
+}
+.crypto-pokemon-summary-item strong{
+  display:block;
+  margin-top:5px;
+  font-size:18px;
+  font-weight:500;
+  letter-spacing:-.025em;
+}
+@media(max-width:700px){
+  .crypto-pokemon-summary{margin-top:12px;}
+  .crypto-pokemon-summary-grid{grid-template-columns:1fr 1fr;gap:8px;}
+  .crypto-pokemon-summary-item{padding:11px;}
+  .crypto-pokemon-summary-item strong{font-size:16px;}
+}
+</style>
+
+<style id="dashboard-crypto-pokemon-tile">
+#dashboard .dashboard-crypto-pokemon-card{margin-top:16px !important;}
+#dashboard .dashboard-crypto-pokemon-card .section-title svg{width:18px;height:18px;color:var(--primary);}
+@media(max-width:700px){#dashboard .dashboard-crypto-pokemon-card{margin-top:16px !important;} .dashboard-investment-grid{grid-template-columns:1fr 1fr !important;}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -1225,6 +1259,15 @@ const dealplugEntries=Array.isArray(data.dealplug?.entries)?data.dealplug.entrie
 const dpIncome=dealplugEntries.filter(e=>e.kind==="income").reduce((s,e)=>s+Number(e.amount||0),0);
 const dpCosts=dealplugEntries.filter(e=>e.kind==="expense"||e.kind==="cost"||e.kind==="kosten").reduce((s,e)=>s+Number(e.amount||0),0);
 const dpBalance=Number(data.dealplug.opening)+dpIncome-dpCosts;
+const dashboardCryptoEntries=Array.isArray(data.cryptoEntries)?data.cryptoEntries:[];
+const dashboardCryptoInvested=dashboardCryptoEntries.filter(e=>(e.assetType||"crypto")==="crypto"&&e.type==="in").reduce((s,e)=>s+Number(e.amount||0),0);
+const dashboardCryptoCashouts=dashboardCryptoEntries.filter(e=>(e.assetType||"crypto")==="crypto"&&e.type==="out").reduce((s,e)=>s+Number(e.amount||0),0);
+const dashboardCryptoResult=dashboardCryptoCashouts-dashboardCryptoInvested;
+const dashboardCryptoOpen=Math.max(0,dashboardCryptoInvested-dashboardCryptoCashouts);
+const dashboardPokemonInvested=dashboardCryptoEntries.filter(e=>(e.assetType||"crypto")==="pokemon"&&e.type==="in").reduce((s,e)=>s+Number(e.amount||0),0);
+const dashboardPokemonCashouts=dashboardCryptoEntries.filter(e=>(e.assetType||"crypto")==="pokemon"&&e.type==="out").reduce((s,e)=>s+Number(e.amount||0),0);
+const dashboardPokemonResult=dashboardPokemonCashouts-dashboardPokemonInvested;
+const dashboardPokemonOpen=Math.max(0,dashboardPokemonInvested-dashboardPokemonCashouts);
 const recent=[...ts].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,6);
 
 const dashboardSnapshotLabel=new Date(Number(dashboardSnapshotKey.slice(0,4)),Number(dashboardSnapshotKey.slice(5,7))-1,1).toLocaleDateString("nl-NL",{month:"long",year:"numeric"});
@@ -1318,20 +1361,6 @@ ${(()=>{
   </div>
 </div>
 </div>
-<div class="card dealplug-dashboard-card dashboard-full-tile">
-<div class="section-title"><span style="display:flex;align-items:center;gap:8px"><i data-lucide="shopping-bag"></i>DealPlugNL</span><span class="badge">Business</span></div>
-<div class="small">Overzicht van verkopen en kosten</div>
-<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:12px">
-<div><div class="small">Huidige stand</div><div class="stat-value ${dpBalance>=0?"positive":"negative"}" style="margin-top:3px">${protectedEuro(dpBalance)}</div></div>
-<div style="text-align:right"><div class="small">Resultaat</div><div class="${(dpIncome-dpCosts)>=0?"positive":"negative"}" style="font-size:16px;font-weight:650;margin-top:3px">${(dpIncome-dpCosts)>=0?"+":""}${protectedEuro(dpIncome-dpCosts)}</div></div>
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
-<div class="dealplug-sales-box" style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Verkopen</div><div class="positive" style="font-weight:600;margin-top:3px">${protectedEuro(dpIncome)}</div></div>
-<div style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Kosten</div><div class="negative" style="font-weight:600;margin-top:3px">${protectedEuro(dpCosts)}</div></div>
-</div>
-<div style="margin-top:13px;height:6px;background:var(--border);border-radius:99px;overflow:hidden"><div style="height:100%;width:${dpIncome>0?Math.min(100,Math.max(0,(dpIncome-dpCosts)/dpIncome*100)):0}%;background:var(--primary);border-radius:99px"></div></div>
-<div class="small" style="margin-top:6px">Netto na kosten</div>
-</div>
 <div class="card"><div class="section-title">Financiële samenvatting</div>
     <div class="finance-summary">
       <div class="finance-summary-item"><i data-lucide="wallet"></i><div><strong>${net>=0?"Je houdt deze maand geld over":"Je geeft deze maand meer uit dan er binnenkomt"}</strong><span>${net>=0?`${protectedEuro(net)} netto over na je uitgaven.`:`Je maandelijkse uitgaven liggen ${protectedEuro(Math.abs(net))} boven je inkomsten.`}</span></div></div>
@@ -1362,6 +1391,32 @@ ${(()=>{
   <div class="card"><div class="section-title">Spaardoelen</div>
     ${data.goals.length?data.goals.slice(0,4).map(g=>{const pct=Number(g.target)>0?Math.min(100,Math.max(0,Number(g.current||0)/Number(g.target)*100)):0;return `<div style="margin-bottom:11px"><div style="display:flex;justify-content:space-between;gap:8px;font-size:12px"><strong>${esc(g.name)}</strong><span>${protectedEuro(g.current||0)} / ${protectedEuro(g.target||0)}</span></div><div class="progress"><div style="width:${pct}%"></div></div></div>`}).join(""):`<div class="empty">Maak je eerste spaardoel aan.</div>`}
   </div>
+<div class="card dashboard-crypto-pokemon-card dashboard-full-tile">
+<div class="section-title"><span style="display:flex;align-items:center;gap:8px"><i data-lucide="bitcoin"></i>Crypto/Pokemon</span><span class="badge">Investeringen</span></div>
+<div class="small">Overzicht van je crypto en Pokémon investeringen</div>
+<div class="dashboard-investment-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
+<div style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Crypto</div><div style="font-size:18px;font-weight:500;margin-top:3px">${protectedEuro(dashboardCryptoOpen)}</div><div class="small" style="margin-top:3px">${dashboardCryptoResult>=0?"Resultaat +"+protectedEuro(dashboardCryptoResult):"Resultaat "+protectedEuro(dashboardCryptoResult)}</div></div>
+<div style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Pokemon</div><div style="font-size:18px;font-weight:500;margin-top:3px">${protectedEuro(dashboardPokemonOpen)}</div><div class="small" style="margin-top:3px">${dashboardPokemonResult>=0?"Resultaat +"+protectedEuro(dashboardPokemonResult):"Resultaat "+protectedEuro(dashboardPokemonResult)}</div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);gap:10px">
+<div><div class="small">Totale inleg</div><div style="font-weight:500;margin-top:3px">${protectedEuro(dashboardCryptoInvested+dashboardPokemonInvested)}</div></div>
+<div style="text-align:right"><div class="small">Totaal resultaat</div><div class="${dashboardCryptoResult+dashboardPokemonResult>=0?"positive":"negative"}" style="font-weight:600;margin-top:3px">${dashboardCryptoResult+dashboardPokemonResult>=0?"+":""}${protectedEuro(dashboardCryptoResult+dashboardPokemonResult)}</div></div>
+</div>
+</div>
+<div class="card dealplug-dashboard-card dashboard-full-tile">
+<div class="section-title"><span style="display:flex;align-items:center;gap:8px"><i data-lucide="shopping-bag"></i>DealPlugNL</span><span class="badge">Business</span></div>
+<div class="small">Overzicht van verkopen en kosten</div>
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:12px">
+<div><div class="small">Huidige stand</div><div class="stat-value ${dpBalance>=0?"positive":"negative"}" style="margin-top:3px">${protectedEuro(dpBalance)}</div></div>
+<div style="text-align:right"><div class="small">Resultaat</div><div class="${(dpIncome-dpCosts)>=0?"positive":"negative"}" style="font-size:16px;font-weight:650;margin-top:3px">${(dpIncome-dpCosts)>=0?"+":""}${protectedEuro(dpIncome-dpCosts)}</div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
+<div class="dealplug-sales-box" style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Verkopen</div><div class="positive" style="font-weight:600;margin-top:3px">${protectedEuro(dpIncome)}</div></div>
+<div style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Kosten</div><div class="negative" style="font-weight:600;margin-top:3px">${protectedEuro(dpCosts)}</div></div>
+</div>
+<div style="margin-top:13px;height:6px;background:var(--border);border-radius:99px;overflow:hidden"><div style="height:100%;width:${dpIncome>0?Math.min(100,Math.max(0,(dpIncome-dpCosts)/dpIncome*100)):0}%;background:var(--primary);border-radius:99px"></div></div>
+<div class="small" style="margin-top:6px">Netto na kosten</div>
+</div>
 </div>`;
 const updateAmountVisibilityButtons=()=>{
   const icon=amountsVisible?"eye-off":"eye";
@@ -2000,6 +2055,38 @@ function renderCrypto(){
     });
     saveAndRender();
   };
+
+  // Onderaan de Crypto/Pokemon-pagina staat één compact totaaloverzicht.
+  const cryptoPokemonSummary=document.createElement("div");
+  cryptoPokemonSummary.className="card transactions crypto-pokemon-summary";
+  cryptoPokemonSummary.innerHTML=`
+    <div class="section-title">
+      <span style="display:flex;align-items:center;gap:8px">
+        <i data-lucide="wallet-cards"></i>Crypto/Pokemon overzicht
+      </span>
+    </div>
+    <div class="small">Samenvatting van je huidige crypto- en Pokémon-investeringen</div>
+    <div class="crypto-pokemon-summary-grid">
+      <div class="crypto-pokemon-summary-item">
+        <span class="small">Crypto</span>
+        <strong>${protectedEuro(cryptoOpen)}</strong>
+      </div>
+      <div class="crypto-pokemon-summary-item">
+        <span class="small">Pokemon</span>
+        <strong>${protectedEuro(pokemonOpen)}</strong>
+      </div>
+      <div class="crypto-pokemon-summary-item">
+        <span class="small">Totale inleg</span>
+        <strong>${protectedEuro(cryptoInvested+pokemonInvested)}</strong>
+      </div>
+      <div class="crypto-pokemon-summary-item">
+        <span class="small">Resultaat</span>
+        <strong class="${(cryptoResult+pokemonResult)>=0?"positive":"negative"}">${(cryptoResult+pokemonResult)>=0?"+":""}${protectedEuro(cryptoResult+pokemonResult)}</strong>
+      </div>
+    </div>
+  `;
+  $("crypto").appendChild(cryptoPokemonSummary);
+  lucide.createIcons();
 }
 
 function renderBudgets(){
