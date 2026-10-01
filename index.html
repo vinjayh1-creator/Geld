@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Budget Planner Yaniv">
+<meta name="apple-mobile-web-app-title" content="Budget Planner">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#f7f8fa">
 <meta name="theme-color" content="#0f172a">
@@ -171,6 +171,16 @@ h1{letter-spacing:-.035em}
   #dashboard > .section-grid {
     gap: 16px;
   }
+}
+
+
+/* Consistente ruimte tussen dashboardtegels */
+#dashboard > .card { margin-top:16px; }
+#dashboard > .section-grid { margin-top:0; }
+#dashboard .finance-insight-grid { margin-top:16px; gap:16px; }
+@media(max-width:700px){
+  #dashboard > .card { margin-top:16px; }
+  #dashboard .finance-insight-grid { margin-top:16px; gap:16px; }
 }
 
 /* iPhone: month selector stays neatly at the right */
@@ -935,6 +945,18 @@ html,body,#root,.app{
 .dashboard-subrow:last-child{border-bottom:0}
 </style>
 
+
+<style id="dashboard-spacing-v45">
+/* Consistente tussenruimte tussen dashboardtegels */
+#dashboard .cards{gap:16px}
+#dashboard .section-grid{gap:16px;margin-top:16px}
+#dashboard .transactions{margin-top:16px}
+@media(max-width:700px){
+  #dashboard .cards{gap:12px}
+  #dashboard .section-grid{gap:12px;margin-top:12px}
+  #dashboard .transactions{margin-top:12px}
+}
+</style>
 </head>
 <body>
 <div class="app">
@@ -1266,17 +1288,6 @@ ${(()=>{
   </div>
 </div>
 <div class="finance-insight-grid">
-  <div class="card"><div class="section-title">Inkomsten vs. uitgaven</div>
-    ${(()=>{const months=[];const base=new Date(currentMonth);for(let i=5;i>=0;i--){const d=new Date(base);d.setMonth(d.getMonth()-i);const key=monthKey(d);const arr=data.transactions.filter(t=>monthKey(t.date)===key);months.push({d,key,income:arr.filter(t=>t.kind==="income").reduce((a,t)=>a+Number(t.amount),0),expense:arr.filter(t=>t.kind==="expense").reduce((a,t)=>a+Number(t.amount),0)});}const max=Math.max(1,...months.flatMap(m=>[m.income,m.expense]));return `<div class="finance-chart">${months.map(m=>`<div class="finance-chart-col"><div class="finance-chart-bars"><div class="finance-chart-bar in" style="height:${Math.max(2,m.income/max*100)}%" title="Inkomsten ${euro(m.income)}"></div><div class="finance-chart-bar out" style="height:${Math.max(2,m.expense/max*100)}%" title="Uitgaven ${euro(m.expense)}"></div></div><div class="finance-chart-label">${m.d.toLocaleDateString("nl-NL",{month:"short"})}</div></div>`).join("")}</div><div class="finance-chart-legend"><span><i class="legend-dot in"></i>Inkomsten</span><span><i class="legend-dot out"></i>Uitgaven</span></div>`;})()}
-  </div>
-  <div class="card"><div class="section-title">Vaste lasten & abonnementen</div>
-    ${(()=>{const subs=data.recurring.filter(r=>r.kind==="expense");const total=subs.reduce((a,r)=>a+Number(r.amount),0);return subs.length?`<div class="small" style="margin-bottom:10px">${subs.length} vaste uitgave${subs.length===1?"":"n"} · ongeveer ${protectedEuro(total)} per maand</div><div class="subscription-grid">${subs.slice(0,6).map(r=>`<div style="padding:10px;border:1px solid var(--border);border-radius:11px"><strong style="font-size:12px">${esc(r.description)}</strong><div class="small" style="margin-top:3px">-${protectedEuro(r.amount)}</div></div>`).join("")}</div>`:`<div class="empty">Nog geen vaste lasten ingesteld.</div>`;})()}
-  </div>
-</div>
-<div class="finance-insight-grid">
-  <div class="card"><div class="section-title">Financiële kalender</div>
-    ${(()=>{const now=new Date();const upcoming=[];data.transactions.forEach(t=>{const d=new Date(t.date);if(d>=new Date(now.getFullYear(),now.getMonth(),now.getDate())&&d<=new Date(now.getFullYear(),now.getMonth(),now.getDate()+30))upcoming.push({date:d,desc:t.description,amount:t.amount,kind:t.kind});});data.recurring.forEach(r=>{const day=Math.min(28,Math.max(1,Number(r.day)||1));for(let m=0;m<2;m++){const d=new Date(now.getFullYear(),now.getMonth()+m,day);if(d>=new Date(now.getFullYear(),now.getMonth(),now.getDate())&&d<=new Date(now.getFullYear(),now.getMonth(),now.getDate()+30))upcoming.push({date:d,desc:r.description,amount:r.amount,kind:r.kind});}});upcoming.sort((a,b)=>a.date-b.date);return upcoming.length?`<div class="finance-calendar">${upcoming.slice(0,7).map(x=>`<div class="calendar-item"><span class="calendar-date">${x.date.toLocaleDateString("nl-NL",{day:"2-digit",month:"short"})}</span><span class="calendar-desc">${esc(x.desc)}</span><span class="calendar-amount ${x.kind==="income"?"positive":"negative"}">${x.kind==="income"?"+":"-"}${protectedEuro(x.amount)}</span></div>`).join("")}</div>`:`<div class="empty">Geen geplande transacties in de komende 30 dagen.</div>`;})()}
-  </div>
   <div class="card"><div class="section-title">Spaardoelen</div>
     ${data.goals.length?data.goals.slice(0,4).map(g=>{const pct=Number(g.target)>0?Math.min(100,Math.max(0,Number(g.current||0)/Number(g.target)*100)):0;return `<div style="margin-bottom:11px"><div style="display:flex;justify-content:space-between;gap:8px;font-size:12px"><strong>${esc(g.name)}</strong><span>${protectedEuro(g.current||0)} / ${protectedEuro(g.target||0)}</span></div><div class="progress"><div style="width:${pct}%"></div></div></div>`}).join(""):`<div class="empty">Maak je eerste spaardoel aan.</div>`}
   </div>
