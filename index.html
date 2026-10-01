@@ -1296,13 +1296,13 @@ ${(()=>{
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px">
     <div style="padding:11px;border:1px solid var(--border);border-radius:12px;background:var(--soft)">
       <div class="small">Terugkerende kosten</div>
-      <div class="negative" style="font-size:18px;font-weight:650;margin-top:4px">${protectedEuro(data.recurring.filter(r=>r.kind==="expense").reduce((s,r)=>s+Number(r.amount||0),0))}</div>
-      <div class="small" style="margin-top:3px">per maand</div>
+      <div class="negative" style="font-size:18px;font-weight:650;margin-top:4px">${(()=>{const monthly=data.recurring.filter(r=>r.kind==="expense").reduce((s,r)=>s+Number(r.amount||0),0); return protectedEuro(monthly)})()}</div>
+      <div class="small" style="margin-top:3px">1× per maand</div>
     </div>
     <div style="padding:11px;border:1px solid var(--border);border-radius:12px">
       <div class="small">Loon</div>
-      <div class="positive" style="font-size:18px;font-weight:650;margin-top:4px">${data.weeklySalary?.enabled?protectedEuro(data.weeklySalary.amount||0):"Niet ingesteld"}</div>
-      <div class="small" style="margin-top:3px">${data.weeklySalary?.enabled?"per week":"Stel je loon in bij Terugkerend"}</div>
+      <div class="positive" style="font-size:18px;font-weight:650;margin-top:4px">${(()=>{if(!data.weeklySalary?.enabled)return "Niet ingesteld"; const week=Math.min(5,Math.ceil(new Date().getDate()/7)); return protectedEuro(Number(data.weeklySalary.amount||0)*week)})()}</div>
+      <div class="small" style="margin-top:3px">${data.weeklySalary?.enabled?`opgelopen t/m week ${Math.min(5,Math.ceil(new Date().getDate()/7))}`:"Stel je loon in bij Terugkerend"}</div>
     </div>
   </div>
 </div>
