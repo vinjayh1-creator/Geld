@@ -1271,6 +1271,29 @@ const updateAmountVisibilityButtons=()=>{
     el.setAttribute("aria-label",label);
   });
   lucide.createIcons();
+
+const dashboardRevolutToggle=$("dashboardRevolutToggle");
+const dashboardRevolutDetails=$("dashboardRevolutDetails");
+const dashboardRevolutChevron=$("dashboardRevolutChevron");
+
+if(dashboardRevolutToggle && dashboardRevolutDetails){
+  const toggleDashboardRevolut=()=>{
+    const isOpen=dashboardRevolutDetails.style.display==="block";
+    dashboardRevolutDetails.style.display=isOpen?"none":"block";
+    dashboardRevolutToggle.setAttribute("aria-expanded",String(!isOpen));
+    if(dashboardRevolutChevron){
+      dashboardRevolutChevron.setAttribute("data-lucide",isOpen?"chevron-right":"chevron-down");
+      lucide.createIcons();
+    }
+  };
+  dashboardRevolutToggle.onclick=toggleDashboardRevolut;
+  dashboardRevolutToggle.onkeydown=(event)=>{
+    if(event.key==="Enter" || event.key===" "){
+      event.preventDefault();
+      toggleDashboardRevolut();
+    }
+  };
+}
 };
 const toggleAllAmounts=()=>{
   amountsVisible=!amountsVisible;
