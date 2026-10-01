@@ -987,9 +987,12 @@ const expenses=ts.filter(t=>t.kind==="expense").reduce((s,t)=>s+Number(t.amount)
 const dashboardSnapshotKey=monthKey(currentMonth);
 const dashboardSnapshot=data.accountSnapshots?.[dashboardSnapshotKey]||{};
 const hasDashboardSnapshot=Object.prototype.hasOwnProperty.call(dashboardSnapshot,"acc1")||Object.prototype.hasOwnProperty.call(dashboardSnapshot,"acc4");
-const cash=hasDashboardSnapshot
+const accountStand=hasDashboardSnapshot
   ? Number(dashboardSnapshot.acc1||0)+Number(dashboardSnapshot.acc4||0)
   : data.accounts.reduce((s,a)=>s+Number(a.balance),0);
+// Beschikbaar geld = opgeslagen maandstand + inkomsten - uitgaven.
+// De handmatige rekeningstand zelf blijft ongewijzigd door transacties.
+const cash=accountStand+(income-expenses);
 const net=income-expenses;
 const dpIncome=data.dealplug.entries.filter(e=>e.kind==="income").reduce((s,e)=>s+Number(e.amount),0);
 const dpCosts=data.dealplug.entries.filter(e=>e.kind==="expense").reduce((s,e)=>s+Number(e.amount),0);
