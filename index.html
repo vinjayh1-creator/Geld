@@ -133,14 +133,671 @@ h1{letter-spacing:-.035em}
 .category-bar{height:7px;background:var(--border);border-radius:99px;overflow:hidden}
 .category-bar>div{height:100%;background:var(--primary);border-radius:99px}
 @media(max-width:850px){.recent-overview-grid{grid-template-columns:1fr}.category-overview{border-left:0;border-top:1px solid var(--border);padding-left:0;padding-top:18px}}
+@media(max-width:700px){
+  /* Recente transacties: volledig binnen de mobiele tegel, zonder horizontaal scrollen */
+  #dashboard .recent-overview-grid{min-width:0;width:100%;}
+  #dashboard .recent-overview-grid > *{min-width:0;width:100%;}
+  #dashboard .recent-overview-grid .table-wrap{overflow:hidden;width:100%;min-width:0;}
+  #dashboard .recent-overview-grid .table{width:100%;min-width:0;max-width:100%;table-layout:fixed;}
+  #dashboard .recent-overview-grid .table th,#dashboard .recent-overview-grid .table td{padding:9px 3px;font-size:11px;vertical-align:middle;min-width:0;}
+  #dashboard .recent-overview-grid .table th:nth-child(1),#dashboard .recent-overview-grid .table td:nth-child(1){width:34%;}
+  #dashboard .recent-overview-grid .table th:nth-child(2),#dashboard .recent-overview-grid .table td:nth-child(2){width:28%;}
+  #dashboard .recent-overview-grid .table th:nth-child(3),#dashboard .recent-overview-grid .table td:nth-child(3){width:20%;white-space:nowrap;}
+  #dashboard .recent-overview-grid .table th:nth-child(4),#dashboard .recent-overview-grid .table td:nth-child(4){width:18%;white-space:nowrap;text-align:right;}
+  #dashboard .recent-overview-grid .table td:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #dashboard .recent-overview-grid .badge{display:block;width:max-content;max-width:100%;padding:3px 5px;font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+}
 
-/* Compacte spaarrekeningen-tegel */
+/* Compacte rekeningen-tegel */
 .section-grid > .card:first-child .account-list { gap: 8px; }
 .section-grid > .card:first-child .account { padding: 9px 10px; }
 .section-grid > .card:first-child .account-icon { width: 30px; height: 30px; }
 .section-grid > .card:first-child .amount { font-size: 14px; }
 .section-grid > .card:first-child .section-title { font-size: 14px; margin-bottom: 10px; }
+
+/* Dashboard spacing */
+.section-grid,
+#dashboard > .section-grid {
+  gap: 16px;
+}
+#dashboard > .card {
+  margin-bottom: 0;
+}
+@media(max-width:700px){
+  #dashboard > .card,
+  #dashboard > .section-grid {
+    margin-bottom: 16px;
+  }
+  #dashboard > .section-grid {
+    gap: 16px;
+  }
+}
+
+/* iPhone: month selector stays neatly at the right */
+@media(max-width:700px){
+  #dashboard .topbar {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    width:100%;
+  }
+  #dashboard .topbar > div:first-child {
+    min-width:0;
+    flex:1 1 auto;
+  }
+  #dashboard .topbar h1 {
+    margin-bottom:2px;
+  }
+  #dashboard .topbar .subtitle {
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  #dashboard .month-nav {
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+  #dashboard .month-nav strong {
+    min-width:92px !important;
+    width:auto !important;
+    font-size:13px;
+  }
+  #dashboard .month-nav .icon-btn {
+    width:32px;
+    height:32px;
+    min-width:32px;
+  }
+}
+
+@media(max-width:390px){
+  #dashboard .topbar .subtitle { display:none; }
+  #dashboard .topbar .month-nav strong {
+    min-width:82px !important;
+    font-size:12px;
+  }
+}
+
+/* Maandstanden dropdown */
+.account-snapshots-card .field{margin-bottom:12px}
+.account-snapshots-card .field select{padding:10px 11px}
+/* Compacte maandstanden */
+.account-snapshots-card{max-width:900px}
+.snapshot-month{border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px;background:var(--soft)}
+.snapshot-month-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.snapshot-month-head strong{font-size:14px}
+.snapshot-row{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;margin:5px 0}
+.snapshot-input-wrap{display:flex;align-items:center;gap:3px;border:1px solid var(--border);background:var(--card);border-radius:8px;padding:4px 7px;width:105px}
+.snapshot-input-wrap input{border:0;outline:0;background:transparent;width:100%;text-align:right;color:var(--text);font-size:13px}
+.snapshot-total,.snapshot-diff{display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:6px;margin-top:6px;font-size:12px}
+.snapshot-total strong,.snapshot-diff strong{font-size:13px}
+@media(max-width:700px){.account-snapshots-card{width:100%}}
+
+/* Consistente ruimte rond DealPlugNL */
+#dashboard .dealplug-dashboard-card {
+  margin-top: 16px !important;
+  margin-bottom: 0 !important;
+}
+@media(max-width:700px){
+  #dashboard .dealplug-dashboard-card {
+    margin-top: 16px !important;
+    margin-bottom: 16px !important;
+  }
+}
+
+/* DealPlugNL: duidelijke ruimte tussen invoertegels */
+#dealplug > .cards + .card {
+  margin-top: 20px;
+}
+#dealplug > .card + .card {
+  margin-top: 20px;
+}
+#dealplug > .card.transactions {
+  margin-top: 20px;
+}
+@media(max-width:700px){
+  #dealplug > .cards + .card {
+    margin-top: 16px;
+  }
+  #dealplug > .card + .card {
+    margin-top: 16px;
+  }
+  #dealplug > .card.transactions {
+    margin-top: 16px;
+  }
+}
+
+<style>
+.cash-visibility-toggle{
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  width:30px;
+  height:30px;
+  padding:0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:8px;
+  cursor:pointer;
+  margin-left:4px;
+}
+.cash-visibility-toggle:hover{background:var(--soft);color:var(--text)}
+.cash-stat-row{display:flex;align-items:center;gap:2px}
+<style>
+.amount-visibility-toggle{
+  width:28px;height:28px;padding:0;border:1px solid var(--border);
+  background:var(--card);color:var(--muted);border-radius:7px;
+  display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;flex:0 0 auto;
+}
+.amount-visibility-toggle svg{width:15px;height:15px}
+.amount-visibility-toggle:hover{color:var(--text);background:var(--soft)}
+<style>
+.icon-btn{
+  width:28px !important;
+  height:28px !important;
+  min-width:28px !important;
+  min-height:28px !important;
+  padding:0 !important;
+  border-radius:7px !important;
+}
+.icon-btn svg{width:15px !important;height:15px !important}
+.backup-btn{
+  width:28px !important;
+  height:28px !important;
+  min-width:28px !important;
+  min-height:28px !important;
+  padding:0 !important;
+  border-radius:7px !important;
+}
+.backup-btn svg{width:15px !important;height:15px !important}
+</style></style></style>
 </style>
+
+<style id="professional-app-refresh">
+/* =========================================================
+   Budget Planner — Professional Fintech App Refresh
+   Layout-only styling: existing functionality/data logic stays intact.
+   ========================================================= */
+
+:root{
+  --bg:#f6f8fc;
+  --card:#ffffff;
+  --text:#172033;
+  --muted:#687386;
+  --border:#e3e8f0;
+  --primary:#2563eb;
+  --primary-hover:#1d4ed8;
+  --soft:#eef5ff;
+  --green:#059669;
+  --red:#dc2626;
+  --yellow:#d97706;
+  --shadow:0 8px 28px rgba(15,23,42,.055);
+  --shadow-hover:0 12px 34px rgba(15,23,42,.09);
+}
+[data-theme="dark"]{
+  --bg:#090f1d;
+  --card:#111827;
+  --text:#f4f7fb;
+  --muted:#98a3b5;
+  --border:#263246;
+  --primary:#60a5fa;
+  --primary-hover:#93c5fd;
+  --soft:#172554;
+  --green:#34d399;
+  --red:#f87171;
+  --yellow:#fbbf24;
+  --shadow:0 8px 28px rgba(0,0,0,.22);
+  --shadow-hover:0 12px 34px rgba(0,0,0,.32);
+}
+
+html,body{
+  background:var(--bg);
+  color:var(--text);
+}
+
+body{
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",sans-serif;
+  letter-spacing:-.012em;
+}
+
+/* Desktop navigation */
+aside{
+  width:252px;
+  padding:24px 16px;
+  background:color-mix(in srgb,var(--card) 97%,var(--bg));
+  border-right:1px solid var(--border);
+  box-shadow:4px 0 24px rgba(15,23,42,.025);
+}
+.brand{
+  padding:7px 10px 26px;
+  font-size:20px;
+  letter-spacing:-.025em;
+}
+.brand svg{width:21px;height:21px;stroke-width:2.1}
+nav button{
+  min-height:44px;
+  padding:11px 13px;
+  margin:3px 0;
+  border-radius:12px;
+  font-size:13px;
+  font-weight:500;
+  transition:background .15s ease,color .15s ease,transform .15s ease;
+}
+nav button svg{width:18px;height:18px;stroke-width:1.9}
+nav button:hover{transform:none}
+nav button.active{
+  font-weight:650;
+  box-shadow:inset 3px 0 0 var(--primary);
+}
+
+/* Main content */
+main{
+  margin-left:252px;
+  width:calc(100% - 252px);
+  max-width:1580px;
+  padding:34px 36px;
+}
+.topbar{
+  margin-bottom:26px;
+}
+h1{
+  font-size:30px;
+  line-height:1.15;
+  font-weight:700;
+  letter-spacing:-.04em;
+}
+.subtitle{
+  font-size:13px;
+  line-height:1.5;
+}
+
+/* Buttons */
+.btn,.icon-btn,.theme-btn{
+  border-radius:11px;
+  transition:transform .15s ease,box-shadow .15s ease,background .15s ease,border-color .15s ease;
+}
+.btn{
+  min-height:40px;
+  padding:9px 14px;
+  font-size:13px;
+  font-weight:600;
+}
+.btn.primary{
+  box-shadow:0 5px 14px color-mix(in srgb,var(--primary) 20%,transparent);
+}
+.btn.primary:hover{
+  background:var(--primary-hover);
+  border-color:var(--primary-hover);
+  transform:translateY(-1px);
+}
+.icon-btn{
+  min-width:36px;
+  min-height:36px;
+}
+.icon-btn:hover{
+  background:var(--soft);
+  border-color:color-mix(in srgb,var(--primary) 28%,var(--border));
+}
+
+/* Summary cards */
+.cards{
+  gap:14px;
+}
+.cards>.card{
+  min-width:0;
+}
+.card{
+  padding:20px;
+  border-radius:18px;
+  border-color:var(--border);
+  box-shadow:var(--shadow);
+  transition:box-shadow .18s ease,border-color .18s ease,transform .18s ease;
+}
+.card:hover{
+  border-color:color-mix(in srgb,var(--primary) 12%,var(--border));
+}
+.stat-label{
+  font-size:12px;
+  font-weight:550;
+  letter-spacing:0;
+}
+.stat-value{
+  margin-top:8px;
+  font-size:25px;
+  line-height:1.15;
+  font-weight:500;
+  letter-spacing:-.03em;
+}
+
+/* Section hierarchy */
+.section-grid{
+  gap:16px;
+  margin-top:16px;
+}
+.section-title{
+  margin-bottom:14px;
+  font-size:15px;
+  font-weight:700;
+  letter-spacing:-.018em;
+}
+.small{
+  line-height:1.45;
+}
+
+/* Accounts */
+.account{
+  padding:12px;
+  border-radius:13px;
+  background:color-mix(in srgb,var(--card) 97%,var(--soft));
+}
+.account:hover{
+  border-color:color-mix(in srgb,var(--primary) 20%,var(--border));
+}
+.account-icon{
+  width:38px;
+  height:38px;
+  border-radius:11px;
+}
+.amount{
+  font-weight:500;
+  letter-spacing:-.02em;
+}
+
+/* Forms */
+.form-grid{gap:14px}
+.field label{
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.01em;
+  text-transform:none;
+}
+.field input,.field select{
+  min-height:42px;
+  padding:10px 12px;
+  border-radius:11px;
+  transition:border-color .15s ease,box-shadow .15s ease;
+}
+.field input:focus,.field select:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 12%,transparent);
+}
+.form-actions{margin-top:16px}
+
+/* Tables */
+.table-wrap{
+  width:100%;
+  max-width:100%;
+}
+.table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+}
+.table th,.table td{
+  padding:12px 10px;
+  border-bottom:1px solid var(--border);
+  font-size:12px;
+}
+.table th{
+  font-size:11px;
+  font-weight:650;
+  letter-spacing:.01em;
+  color:var(--muted);
+}
+.table tbody tr:last-child td{border-bottom:0}
+.table tbody tr:hover td{
+  background:color-mix(in srgb,var(--soft) 45%,transparent);
+}
+.badge{
+  padding:4px 8px;
+  font-size:10px;
+  font-weight:600;
+}
+
+/* Dashboard recent activity + category panel */
+.recent-overview-grid{
+  gap:22px;
+}
+.category-overview{
+  padding-left:20px;
+}
+.category-overview-title{
+  font-size:13px;
+  margin-bottom:13px;
+}
+.category-item{
+  margin-bottom:12px;
+}
+.category-item-top{
+  font-size:12px;
+}
+.category-bar{
+  height:6px;
+}
+
+/* Quick actions */
+.quick-grid{gap:11px}
+.quick-btn{
+  min-height:108px;
+  border-radius:15px;
+  padding:14px 11px;
+  box-shadow:none;
+}
+.quick-btn strong{
+  font-size:13px;
+  font-weight:650;
+}
+.quick-btn .small{font-size:10px}
+
+/* DealPlug card */
+.dealplug-dashboard-card{
+  overflow:hidden;
+}
+.dealplug-dashboard-card .stat-value{
+  font-size:24px;
+}
+
+/* Monthly account snapshots */
+.account-snapshots-card{
+  max-width:920px;
+}
+.snapshot-month{
+  border-radius:13px;
+  padding:11px 13px;
+}
+.snapshot-input-wrap{
+  width:115px;
+  min-height:36px;
+  border-radius:9px;
+}
+.snapshot-input-wrap input{
+  font-size:13px;
+}
+
+/* Backup / theme controls */
+.bottom-tools{
+  left:16px;
+  right:16px;
+  bottom:18px;
+}
+.theme-btn{
+  min-height:40px;
+  padding:9px 11px;
+  font-size:12px;
+  font-weight:550;
+}
+.theme-btn:hover{
+  background:var(--soft);
+}
+
+/* Mobile app */
+@media(max-width:700px){
+  aside{display:none}
+  main{
+    margin:0;
+    width:100%;
+    max-width:none;
+    padding:17px 14px calc(96px + env(safe-area-inset-bottom));
+  }
+  .mobile-head{
+    margin-bottom:18px;
+  }
+  .mobile-head .brand{
+    padding:0;
+    font-size:18px;
+  }
+  .mobile-head .brand svg{
+    width:19px;
+    height:19px;
+  }
+  .topbar{
+    margin-bottom:18px;
+  }
+  .topbar h1{
+    font-size:24px;
+  }
+  .cards{
+    gap:9px;
+  }
+  .card{
+    padding:15px;
+    border-radius:16px;
+  }
+  .stat-label{font-size:11px}
+  .stat-value{font-size:19px}
+  .section-grid{
+    gap:12px;
+    margin-top:12px;
+  }
+  .section-title{font-size:14px}
+  .account{padding:10px}
+  .account-icon{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+  }
+  .recent-overview-grid{
+    gap:0;
+  }
+  .category-overview{
+    margin-top:8px;
+    padding-top:15px;
+  }
+
+  /* Recent transactions: compact, no horizontal overflow */
+  #dashboard .recent-overview-grid .table{
+    table-layout:fixed;
+    min-width:0;
+    width:100%;
+  }
+  #dashboard .recent-overview-grid .table th,
+  #dashboard .recent-overview-grid .table td{
+    padding:9px 3px;
+    font-size:10.5px;
+  }
+  #dashboard .recent-overview-grid .table th:nth-child(1),
+  #dashboard .recent-overview-grid .table td:nth-child(1){width:33%}
+  #dashboard .recent-overview-grid .table th:nth-child(2),
+  #dashboard .recent-overview-grid .table td:nth-child(2){width:27%}
+  #dashboard .recent-overview-grid .table th:nth-child(3),
+  #dashboard .recent-overview-grid .table td:nth-child(3){width:21%;white-space:nowrap}
+  #dashboard .recent-overview-grid .table th:nth-child(4),
+  #dashboard .recent-overview-grid .table td:nth-child(4){width:19%;white-space:nowrap;text-align:right}
+  #dashboard .recent-overview-grid .table td:first-child{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  #dashboard .recent-overview-grid .badge{
+    display:inline-flex;
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    padding:3px 5px;
+    font-size:8.5px;
+  }
+
+  .bottom-nav{
+    box-shadow:0 -8px 28px rgba(15,23,42,.08);
+    background:color-mix(in srgb,var(--card) 94%,transparent);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border-top-color:var(--border);
+  }
+  .bottom-nav button{
+    min-height:44px;
+    border-radius:10px;
+    font-weight:500;
+  }
+  .bottom-nav button.active{
+    background:var(--soft);
+    font-weight:650;
+  }
+  .bottom-nav button svg{
+    width:19px;
+    height:19px;
+  }
+}
+
+/* Very small iPhones */
+@media(max-width:390px){
+  main{
+    padding-left:12px;
+    padding-right:12px;
+  }
+  .card{padding:14px}
+  .stat-value{font-size:18px}
+  #dashboard .recent-overview-grid .table th,
+  #dashboard .recent-overview-grid .table td{
+    padding-left:2px;
+    padding-right:2px;
+    font-size:10px;
+  }
+}
+
+/* Reduce accidental horizontal page overflow */
+html,body,#root,.app{
+  max-width:100%;
+  overflow-x:hidden;
+}
+</style>
+
+
+<style id="compact-action-buttons">
+/* Compactere blauwe actieknoppen */
+.btn.primary{
+  min-height:36px;
+  padding:7px 12px;
+  font-size:12px;
+  border-radius:9px;
+  box-shadow:0 4px 10px color-mix(in srgb,var(--primary) 16%,transparent);
+}
+.btn.primary svg{
+  width:16px;
+  height:16px;
+}
+.form-actions .btn.primary{
+  min-height:36px;
+}
+@media(max-width:700px){
+  .btn.primary{
+    min-height:35px;
+    padding:7px 11px;
+    font-size:12px;
+    border-radius:9px;
+  }
+  .btn.primary svg{
+    width:15px;
+    height:15px;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -161,7 +818,7 @@ h1{letter-spacing:-.035em}
     <button class="theme-btn" id="backupRestore"><i data-lucide="upload"></i><span>Backup herstellen</span></button>
     <input type="file" id="backupFile" accept=".json,application/json" style="display:none">
   </div>
-  <button class="theme-btn" id="themeBtn"><i data-lucide="moon"></i><span>Licht/donker</span></button>
+  <button class="theme-btn" id="themeBtn"><i data-lucide="moon"></i><span>Licht/donker</span></button><button class="amount-visibility-toggle" id="toggleAmountsVisibility" title="Bedragen tonen" aria-label="Bedragen tonen"><i data-lucide="eye"></i></button>
 </div>
 </aside>
 <main>
@@ -169,7 +826,7 @@ h1{letter-spacing:-.035em}
   <div class="brand"><i data-lucide="wallet"></i>Budget Planner</div>
   <div style="display:flex;gap:7px;align-items:center">
     <button class="icon-btn" id="mobileBackup" title="Backup"><i data-lucide="hard-drive-download"></i></button>
-    <button class="icon-btn" id="mobileTheme"><i data-lucide="moon"></i></button>
+    <button class="icon-btn amount-visibility-toggle" id="mobileToggleAmounts" title="Bedragen tonen" aria-label="Bedragen tonen"><i data-lucide="eye"></i></button><button class="icon-btn" id="mobileTheme"><i data-lucide="moon"></i></button>
   </div>
 </div>
 <div id="mobileBackupMenu" style="display:none;position:fixed;top:62px;right:14px;z-index:30;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:8px;box-shadow:var(--shadow);min-width:190px">
@@ -208,15 +865,15 @@ h1{letter-spacing:-.035em}
 const STORAGE_KEY="budgetPlannerV2";
 const DEFAULT_ACCOUNTS=[
 {id:"acc1",name:"ABN Betaalrekening",type:"betaal",balance:0,icon:"wallet"},
-{id:"acc2",name:"ABN Spaarrekening",type:"spaar",balance:0,icon:"piggy-bank"},
+{id:"acc2",name:"ABN Amro",type:"spaar",balance:0,icon:"piggy-bank"},
 {id:"acc3",name:"Revolut Betaalrekening",type:"revolut-betaal",balance:0,icon:"credit-card"},
-{id:"acc4",name:"Revolut Spaarrekening",type:"revolut-spaar",balance:0,icon:"landmark"}
+{id:"acc4",name:"Revolut",type:"revolut-spaar",balance:0,icon:"landmark"}
 ];
 const categories=["Wonen","Boodschappen","Auto","Benzine","Vervoer","Abonnementen","Uit eten","Entertainment","Kleding","Vakantie","Gezondheid","Sport","Verzekeringen","Belastingen","Salaris","Freelance","Sparen","Overig"];
 const quickExpenses=[["Boodschappen","shopping-cart"],["Tanken","fuel"],["Uit eten","utensils"],["Abonnement","credit-card"],["Kleding","shirt"],["Vervoer","car"],["Entertainment","gamepad-2"],["Vakantie","plane"],["Gezondheid","heart-pulse"],["Overig","more-horizontal"],["Crypto","bitcoin"]];
 
 function freshData(){
-return {theme:"light",cryptoEnabled:true,crypto:0,cryptoEntries:[],accounts:structuredClone(DEFAULT_ACCOUNTS),transactions:[],budgets:[],goals:[],recurring:[],weeklySalary:{enabled:false,amount:0,accountId:"",description:"Wekelijks loon"},dealplug:{opening:0,entries:[]},processedRecurring:{}};
+return {theme:"light",cryptoEnabled:true,crypto:0,cryptoEntries:[],accounts:structuredClone(DEFAULT_ACCOUNTS),transactions:[],budgets:[],goals:[],recurring:[],weeklySalary:{enabled:false,amount:0,accountId:"",description:"Wekelijks loon"},dealplug:{opening:0,entries:[]},processedRecurring:{},accountSnapshots:{}};
 }
 function loadData(){
 let raw=null;
@@ -232,7 +889,7 @@ d.theme=d.theme==="dark"?"dark":"light";
 d.cryptoEnabled=typeof d.cryptoEnabled==="boolean"?d.cryptoEnabled:true;
 d.crypto=Number(d.crypto)||0;
 d.accounts=Array.isArray(d.accounts)&&d.accounts.length?d.accounts:structuredClone(DEFAULT_ACCOUNTS);
-const rename={"Betaalrekening":"ABN Betaalrekening","Spaarrekening":"ABN Spaarrekening"};
+const rename={"Betaalrekening":"ABN Betaalrekening","Spaarrekening":"ABN Amro","ABN Spaarrekening":"ABN Amro","Revolut Spaarrekening":"Revolut"};
 d.accounts.forEach(a=>{if(rename[a.name])a.name=rename[a.name];a.balance=Number(a.balance)||0});
 const savings=d.accounts.filter(a=>a.type==="spaar"||a.type==="revolut-spaar"||/spaarrekening/i.test(a.name));
 d.accounts=savings.length?savings:[structuredClone(DEFAULT_ACCOUNTS[1])];
@@ -250,15 +907,18 @@ d.weeklySalary.enabled=!!d.weeklySalary.enabled;
 d.weeklySalary.amount=Number(d.weeklySalary.amount)||0;
 d.weeklySalary.accountId=(d.accounts.some(a=>a.id===d.weeklySalary.accountId)?d.weeklySalary.accountId:d.accounts[0]?.id)||"";
 d.processedRecurring=d.processedRecurring&&typeof d.processedRecurring==="object"?d.processedRecurring:{};
+d.accountSnapshots=d.accountSnapshots&&typeof d.accountSnapshots==="object"?d.accountSnapshots:{};
 return d;
 }
 let data=loadData();
 let activeView="dashboard";
+let amountsVisible=true;
 let currentMonth=new Date();
 currentMonth.setDate(1);
 
 const $=id=>document.getElementById(id);
 const euro=n=>new Intl.NumberFormat("nl-NL",{style:"currency",currency:"EUR"}).format(Number(n)||0);
+const protectedEuro=n=>amountsVisible?euro(n):"••••••";
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,9);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 const dateKey=d=>{const x=new Date(d);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`};
@@ -324,24 +984,34 @@ function renderDashboard(){
 const ts=monthTransactions();
 const income=ts.filter(t=>t.kind==="income").reduce((s,t)=>s+Number(t.amount),0);
 const expenses=ts.filter(t=>t.kind==="expense").reduce((s,t)=>s+Number(t.amount),0);
-const cash=data.accounts.reduce((s,a)=>s+Number(a.balance),0);
+const dashboardSnapshotKey=monthKey(currentMonth);
+const dashboardSnapshot=data.accountSnapshots?.[dashboardSnapshotKey]||{};
+const hasDashboardSnapshot=Object.prototype.hasOwnProperty.call(dashboardSnapshot,"acc1")||Object.prototype.hasOwnProperty.call(dashboardSnapshot,"acc4");
+const cash=hasDashboardSnapshot
+  ? Number(dashboardSnapshot.acc1||0)+Number(dashboardSnapshot.acc4||0)
+  : data.accounts.reduce((s,a)=>s+Number(a.balance),0);
 const net=income-expenses;
 const dpIncome=data.dealplug.entries.filter(e=>e.kind==="income").reduce((s,e)=>s+Number(e.amount),0);
 const dpCosts=data.dealplug.entries.filter(e=>e.kind==="expense").reduce((s,e)=>s+Number(e.amount),0);
 const dpBalance=Number(data.dealplug.opening)+dpIncome-dpCosts;
 const recent=[...ts].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,6);
+
+const dashboardSnapshotLabel=new Date(Number(dashboardSnapshotKey.slice(0,4)),Number(dashboardSnapshotKey.slice(5,7))-1,1).toLocaleDateString("nl-NL",{month:"long",year:"numeric"});
 $("dashboard").innerHTML=`
 <div class="topbar"><div><h1>Dashboard</h1><div class="subtitle">Je financiële overzicht</div></div>
 <div class="month-nav"><button class="icon-btn" id="prevMonth"><i data-lucide="chevron-left"></i></button><strong style="min-width:145px;text-align:center;text-transform:capitalize">${monthName()}</strong><button class="icon-btn" id="nextMonth"><i data-lucide="chevron-right"></i></button></div></div>
 <div class="cards">
-<div class="card"><div class="stat-label"><i data-lucide="wallet"></i>Beschikbaar geld</div><div class="stat-value">${euro(cash)}</div></div>
-<div class="card"><div class="stat-label"><i data-lucide="arrow-down-left"></i>Deze maand binnen</div><div class="stat-value positive">${euro(income)}</div></div>
-<div class="card"><div class="stat-label"><i data-lucide="arrow-up-right"></i>Deze maand eruit</div><div class="stat-value negative">${euro(expenses)}</div></div>
-<div class="card"><div class="stat-label"><i data-lucide="${net>=0?"trending-up":"trending-down"}"></i>Deze maand saldo</div><div class="stat-value ${net>=0?"positive":"negative"}">${euro(net)}</div></div>
+<div class="card"><div class="stat-label"><i data-lucide="wallet"></i>Beschikbaar geld</div><div class="stat-value">${protectedEuro(cash)}</div></div>
+<div class="card"><div class="stat-label"><i data-lucide="arrow-down-left"></i>Deze maand binnen</div><div class="stat-value positive">${protectedEuro(income)}</div></div>
+<div class="card"><div class="stat-label"><i data-lucide="arrow-up-right"></i>Deze maand eruit</div><div class="stat-value negative">${protectedEuro(expenses)}</div></div>
+<div class="card"><div class="stat-label"><i data-lucide="${net>=0?"trending-up":"trending-down"}"></i>Deze maand saldo</div><div class="stat-value ${net>=0?"positive":"negative"}">${protectedEuro(net)}</div></div>
 </div>
 </div>
 <div class="section-grid">
-<div class="card"><div class="section-title">Spaarrekeningen</div><div class="account-list">${data.accounts.map(a=>`<div class="account"><div class="account-left"><div class="account-icon"><i data-lucide="${a.icon}"></i></div><div>${esc(a.name)}</div></div><div class="amount">${euro(a.balance)}</div></div>`).join("")}</div></div>
+<div class="card"><div class="section-title">Rekeningen</div><div class="small" style="margin-bottom:9px">Stand ${dashboardSnapshotLabel}</div><div class="account-list">
+<div class="account"><div class="account-left"><div class="account-icon"><i data-lucide="landmark"></i></div><div>ABN Amro</div></div><div class="amount">${protectedEuro(dashboardSnapshot.acc1||0)}</div></div>
+<div class="account"><div class="account-left"><div class="account-icon"><i data-lucide="wallet"></i></div><div>Revolut</div></div><div class="amount">${protectedEuro(dashboardSnapshot.acc4||0)}</div></div>
+</div></div>
 </div>
 <div class="card transactions"><div class="section-title">Snelle uitgave</div>
 <div class="quick-grid">
@@ -358,11 +1028,7 @@ $("dashboard").innerHTML=`
 </div>
 <div class="small" style="margin-top:8px">Wordt alleen als uitgave geregistreerd en verandert je spaarrekening niet.</div>
 </div>
-<div class="card transactions"><div class="section-title">Snelle inkomsten</div>
-<div class="quick-grid">
-<button class="quick-btn" data-quick-income="salary"><i data-lucide="briefcase"></i><strong>Loon uit werk</strong><span class="small">Bedrag invoeren</span></button>
-<button class="quick-btn" data-quick-income="dealplug"><i data-lucide="shopping-bag"></i><strong>Verkopen DealPlugNL</strong><span class="small">Verkoop toevoegen</span></button>
-</div></div>
+</div>
 <div class="card transactions">
 <div class="section-title">
   <span>Recente transacties</span>
@@ -391,19 +1057,43 @@ $("dashboard").innerHTML=`
   </div>
 </div>
 </div>
-<div class="card dealplug-dashboard-card">
+<div class="card dealplug-dashboard-card dashboard-full-tile">
 <div class="section-title"><span style="display:flex;align-items:center;gap:8px"><i data-lucide="shopping-bag"></i>DealPlugNL</span><span class="badge">Business</span></div>
 <div class="small">Overzicht van verkopen en kosten</div>
 <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:12px">
-<div><div class="small">Huidige stand</div><div class="stat-value ${dpBalance>=0?"positive":"negative"}" style="margin-top:3px">${euro(dpBalance)}</div></div>
-<div style="text-align:right"><div class="small">Resultaat</div><div class="${(dpIncome-dpCosts)>=0?"positive":"negative"}" style="font-size:16px;font-weight:650;margin-top:3px">${(dpIncome-dpCosts)>=0?"+":""}${euro(dpIncome-dpCosts)}</div></div>
+<div><div class="small">Huidige stand</div><div class="stat-value ${dpBalance>=0?"positive":"negative"}" style="margin-top:3px">${protectedEuro(dpBalance)}</div></div>
+<div style="text-align:right"><div class="small">Resultaat</div><div class="${(dpIncome-dpCosts)>=0?"positive":"negative"}" style="font-size:16px;font-weight:650;margin-top:3px">${(dpIncome-dpCosts)>=0?"+":""}${protectedEuro(dpIncome-dpCosts)}</div></div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
-<div style="padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--soft)"><div class="small">Verkopen</div><div class="positive" style="font-weight:600;margin-top:3px">${euro(dpIncome)}</div></div>
-<div style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Kosten</div><div class="negative" style="font-weight:600;margin-top:3px">${euro(dpCosts)}</div></div>
+<div style="padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--soft)"><div class="small">Verkopen</div><div class="positive" style="font-weight:600;margin-top:3px">${protectedEuro(dpIncome)}</div></div>
+<div style="padding:10px;border:1px solid var(--border);border-radius:12px"><div class="small">Kosten</div><div class="negative" style="font-weight:600;margin-top:3px">${protectedEuro(dpCosts)}</div></div>
 </div>
 <div style="margin-top:13px;height:6px;background:var(--border);border-radius:99px;overflow:hidden"><div style="height:100%;width:${dpIncome>0?Math.min(100,Math.max(0,(dpIncome-dpCosts)/dpIncome*100)):0}%;background:var(--primary);border-radius:99px"></div></div>
 <div class="small" style="margin-top:6px">Netto na kosten</div>`;
+const updateAmountVisibilityButtons=()=>{
+  const icon=amountsVisible?"eye-off":"eye";
+  const label=amountsVisible?"Bedragen verbergen":"Bedragen tonen";
+  ["toggleAmountsVisibility","mobileToggleAmounts"].forEach(id=>{
+    const el=$(id);
+    if(!el)return;
+    el.innerHTML=`<i data-lucide="${icon}"></i>`;
+    el.title=label;
+    el.setAttribute("aria-label",label);
+  });
+  lucide.createIcons();
+};
+const toggleAllAmounts=()=>{
+  amountsVisible=!amountsVisible;
+  updateAmountVisibilityButtons();
+  renderDashboard();
+  if(typeof renderCrypto==="function") renderCrypto();
+  if(typeof renderDealPlug==="function") renderDealPlug();
+  if(typeof renderAccounts==="function") renderAccounts();
+};
+$("toggleAmountsVisibility").onclick=toggleAllAmounts;
+$("mobileToggleAmounts").onclick=toggleAllAmounts;
+$("prevMonth").onclick=()=>{currentMonth.setMonth(currentMonth.getMonth()-1);render()};
+$("nextMonth").onclick=()=>{currentMonth.setMonth(currentMonth.getMonth()+1);render()};
 $("dashboardAdd").onclick=()=>{setActiveView("transactions");setTimeout(()=>$("description")?.focus(),0)};
 document.querySelectorAll("[data-quick-expense]").forEach(btn=>btn.onclick=()=>{
 const category=btn.dataset.quickExpense;
@@ -508,8 +1198,8 @@ data.transactions.push({id:uid(),description,amount,date,category:"Overboeking",
 }else{
 const acc=accountById(accountId);
 if(!acc){notify("Kies een rekening.");return}
-if(kind==="expense"&&acc.balance<amount){notify("Onvoldoende saldo op deze rekening.");return}
-acc.balance+=kind==="income"?amount:-amount;
+// Gewone transacties zijn alleen registraties voor het dashboard en
+// veranderen niet de handmatig ingevoerde rekeningstand.
 data.transactions.push({id:uid(),description,amount,date,category:$("category").value,accountId,kind});
 }
 saveAndRender();
@@ -530,14 +1220,9 @@ from.balance+=t.amount;to.balance-=t.amount;
 if(from.balance<n){from.balance-=t.amount;to.balance+=t.amount;notify("Onvoldoende saldo voor deze wijziging.");return}
 from.balance-=n;to.balance+=n;
 }else{
-if(t.quickOnly){
+// Het wijzigen van een gewone transactie verandert alleen de transactie zelf,
+// niet de handmatig ingevoerde rekeningstand.
 t.amount=n;
-}else{
-const acc=accountById(t.accountId);if(!acc)return;
-acc.balance+=t.kind==="income"?-t.amount:t.amount;
-if(t.kind==="expense"&&acc.balance<n){acc.balance-=t.amount;notify("Onvoldoende saldo voor deze wijziging.");return}
-t.amount=n;acc.balance+=t.kind==="income"?n:-n;
-}
 }
 t.amount=n;saveAndRender();
 }
@@ -545,16 +1230,102 @@ function deleteTransaction(tid){
 const t=data.transactions.find(x=>x.id===tid);if(!t)return;
 if(!confirm("Deze transactie verwijderen?"))return;
 if(t.kind==="transfer"){const from=accountById(t.accountId),to=accountById(t.toAccountId);if(from)from.balance+=t.amount;if(to)to.balance-=t.amount}
-else if(!t.quickOnly){const acc=accountById(t.accountId);if(acc)acc.balance+=t.kind==="income"?-t.amount:t.amount}
 data.transactions=data.transactions.filter(x=>x.id!==tid);saveAndRender();
 }
 
+let selectedSnapshotMonth="";
+
 function renderAccounts(){
-$("accounts").innerHTML=`<div class="topbar"><div><h1>Rekeningen</h1><div class="subtitle">Je actuele geldsaldi</div></div></div>
-<div class="notice"><i data-lucide="info"></i> Nieuwe transacties veranderen de saldi automatisch. Gebruik "Saldo aanpassen" alleen voor een beginsaldo of correctie.</div>
-<div class="cards">${data.accounts.map(a=>`<div class="card"><div class="stat-label"><i data-lucide="${a.icon}"></i>${esc(a.name)}</div><div class="stat-value">${euro(a.balance)}</div><button class="btn" style="margin-top:14px" data-adjust="${a.id}"><i data-lucide="pencil"></i>Saldo aanpassen</button></div>`).join("")}</div>`;
-document.querySelectorAll("[data-adjust]").forEach(b=>b.onclick=()=>adjustAccount(b.dataset.adjust));
+const months=[];
+const startDate=new Date(2026,8,1); // eerste stand: 1-09-2026
+const now=new Date();
+const current=new Date(now.getFullYear(),now.getMonth(),1);
+
+// Vanaf 1-09-2026 tonen we iedere maand vooruit.
+const endDate=new Date(Math.max(startDate.getTime(),current.getTime()));
+endDate.setMonth(endDate.getMonth()+12);
+
+for(let d=new Date(startDate);d<=endDate;d.setMonth(d.getMonth()+1)){
+  months.push(new Date(d));
 }
+
+const key=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+const label=d=>`1-${String(d.getMonth()+1).padStart(2,"0")}`;
+const val=(k,id)=>Number(data.accountSnapshots?.[k]?.[id]||0);
+const accounts=[["acc1","ABN Amro"],["acc4","Revolut"]];
+
+// Standaard alleen de huidige beschikbare maand tonen.
+// Zolang de kalenderdatum vóór september 2026 ligt, gebruiken we 1-09-2026 als eerste beschikbare maand.
+const currentKey=key(new Date(Math.max(startDate.getTime(),current.getTime())));
+if(!selectedSnapshotMonth || !months.some(d=>key(d)===selectedSnapshotMonth)){
+  selectedSnapshotMonth=currentKey;
+}
+
+const selectedIndex=months.findIndex(d=>key(d)===selectedSnapshotMonth);
+const selectedDate=months[selectedIndex];
+const selectedKey=key(selectedDate);
+const prev=selectedIndex>0?months[selectedIndex-1]:null;
+const total=accounts.reduce((sum,a)=>sum+val(selectedKey,a[0]),0);
+const prevTotal=prev?accounts.reduce((sum,a)=>sum+val(key(prev),a[0]),0):0;
+
+$("accounts").innerHTML=`
+<div class="topbar"><div><h1>Rekeningen</h1><div class="subtitle">Maandelijkse standen</div></div></div>
+<div class="card account-snapshots-card">
+<div class="section-title">Stand per maand</div>
+<div class="small" style="margin-bottom:10px">Kies een maand. Alleen de geselecteerde maand wordt weergegeven.</div>
+<div class="field" style="margin-bottom:12px">
+<label>Maand</label>
+<select id="snapshotMonthSelect">
+${months.map(d=>`<option value="${key(d)}" ${key(d)===selectedKey?"selected":""}>${d.toLocaleDateString("nl-NL",{month:"long",year:"numeric"})}</option>`).join("")}
+</select>
+</div>
+<div class="account-snapshot-list">
+<div class="snapshot-month">
+<div class="snapshot-month-head"><strong>${label(selectedDate)}</strong><span class="small">${selectedDate.toLocaleDateString("nl-NL",{month:"long",year:"numeric"})}</span></div>
+${accounts.map(a=>`<div class="snapshot-row"><span>${a[1]}</span><div class="snapshot-input-wrap"><span>€</span><input type="number" min="0" step="0.01" inputmode="decimal" data-snapshot-month="${selectedKey}" data-snapshot-account="${a[0]}" value="${val(selectedKey,a[0])||""}" placeholder="0,00"></div></div>`).join("")}
+<button type="button" class="btn primary snapshot-save-btn" id="saveSnapshotBtn" style="margin-top:10px;width:100%">Opslaan</button>
+<div class="snapshot-total"><span>Totaal</span><strong>${euro(total)}</strong></div>
+${prev?`<div class="snapshot-diff"><span>Verschil</span><strong class="${total-prevTotal>=0?"positive":"negative"}">${total-prevTotal>=0?"+":""}${euro(total-prevTotal)}</strong></div>`:""}
+</div>
+</div></div>`;
+
+$("snapshotMonthSelect").onchange=()=>{
+  selectedSnapshotMonth=$("snapshotMonthSelect").value;
+  renderAccounts();
+};
+
+$("saveSnapshotBtn").onclick=()=>{
+  const saveButton=$("saveSnapshotBtn");
+  const inputs=document.querySelectorAll("[data-snapshot-month]");
+  const monthToSave=selectedSnapshotMonth;
+  if(!monthToSave){
+    notify("Kies eerst een maand.");
+    return;
+  }
+
+  data.accountSnapshots=data.accountSnapshots||{};
+  data.accountSnapshots[monthToSave]=data.accountSnapshots[monthToSave]||{};
+
+  inputs.forEach(input=>{
+    const id=input.dataset.snapshotAccount;
+    const raw=String(input.value||"").replace(",", ".").trim();
+    const value=raw===""?0:Number(raw);
+    data.accountSnapshots[monthToSave][id]=Number.isFinite(value)?value:0;
+  });
+
+  // Laat het dashboard direct dezelfde maand tonen als de zojuist opgeslagen stand.
+  const parts=monthToSave.split("-").map(Number);
+  if(parts.length===2 && Number.isFinite(parts[0]) && Number.isFinite(parts[1])){
+    currentMonth=new Date(parts[0],parts[1]-1,1);
+  }
+
+  persist();
+  render();
+  notify("Stand opgeslagen en dashboard bijgewerkt.");
+};
+lucide.createIcons();
+}
+
 function adjustAccount(id){
 const a=accountById(id);if(!a)return;
 const v=prompt(`Nieuw saldo voor ${a.name}:`,a.balance.toFixed(2));
@@ -598,19 +1369,19 @@ function renderCrypto(){
     <div class="cards">
       <div class="card">
         <div class="stat-label"><i data-lucide="arrow-down-left"></i>Totale inleg</div>
-        <div class="stat-value">${euro(cryptoInvested)}</div>
+        <div class="stat-value">${protectedEuro(cryptoInvested)}</div>
       </div>
       <div class="card">
         <div class="stat-label"><i data-lucide="arrow-up-right"></i>Uitgecasht</div>
-        <div class="stat-value">${euro(cryptoCashouts)}</div>
+        <div class="stat-value">${protectedEuro(cryptoCashouts)}</div>
       </div>
       <div class="card">
         <div class="stat-label"><i data-lucide="${cryptoResult>=0?"trending-up":"trending-down"}"></i>Gerealiseerd resultaat</div>
-        <div class="stat-value ${cryptoResult>=0?"positive":"negative"}">${cryptoResult>=0?"+":""}${euro(cryptoResult)}</div>
+        <div class="stat-value ${cryptoResult>=0?"positive":"negative"}">${cryptoResult>=0?"+":""}${protectedEuro(cryptoResult)}</div>
       </div>
       <div class="card">
         <div class="stat-label"><i data-lucide="coins"></i>Nog in crypto</div>
-        <div class="stat-value">${euro(cryptoOpen)}</div>
+        <div class="stat-value">${protectedEuro(cryptoOpen)}</div>
       </div>
     </div>
 
@@ -658,7 +1429,7 @@ function renderCrypto(){
             <td>${esc(e.description||"Crypto")}</td>
             <td>${new Date(e.date).toLocaleDateString("nl-NL")}</td>
             <td>${e.type==="in"?"Inleg":"Uitcashen"}</td>
-            <td class="${e.type==="in"?"negative":"positive"}">${e.type==="in"?"-":"+"}${euro(e.amount)}</td>
+            <td class="${e.type==="in"?"negative":"positive"}">${e.type==="in"?"-":"+"}${protectedEuro(e.amount)}</td>
           </tr>`).join("")}
         </tbody>
       </table></div>`:`<div class="empty">Nog geen crypto-transacties.</div>`}
@@ -669,19 +1440,19 @@ function renderCrypto(){
     <div class="cards">
       <div class="card">
         <div class="stat-label"><i data-lucide="arrow-down-left"></i>Totale inleg</div>
-        <div class="stat-value">${euro(pokemonInvested)}</div>
+        <div class="stat-value">${protectedEuro(pokemonInvested)}</div>
       </div>
       <div class="card">
         <div class="stat-label"><i data-lucide="arrow-up-right"></i>Verkocht / uitgecasht</div>
-        <div class="stat-value">${euro(pokemonCashouts)}</div>
+        <div class="stat-value">${protectedEuro(pokemonCashouts)}</div>
       </div>
       <div class="card">
         <div class="stat-label"><i data-lucide="${pokemonResult>=0?"trending-up":"trending-down"}"></i>Gerealiseerd resultaat</div>
-        <div class="stat-value ${pokemonResult>=0?"positive":"negative"}">${pokemonResult>=0?"+":""}${euro(pokemonResult)}</div>
+        <div class="stat-value ${pokemonResult>=0?"positive":"negative"}">${pokemonResult>=0?"+":""}${protectedEuro(pokemonResult)}</div>
       </div>
       <div class="card">
         <div class="stat-label"><i data-lucide="layers"></i>Nog in Pokémon</div>
-        <div class="stat-value">${euro(pokemonOpen)}</div>
+        <div class="stat-value">${protectedEuro(pokemonOpen)}</div>
       </div>
     </div>
 
@@ -729,7 +1500,7 @@ function renderCrypto(){
             <td>${esc(e.description||"Pokémon")}</td>
             <td>${new Date(e.date).toLocaleDateString("nl-NL")}</td>
             <td>${e.type==="in"?"Inleg":"Verkoop"}</td>
-            <td class="${e.type==="in"?"negative":"positive"}">${e.type==="in"?"-":"+"}${euro(e.amount)}</td>
+            <td class="${e.type==="in"?"negative":"positive"}">${e.type==="in"?"-":"+"}${protectedEuro(e.amount)}</td>
           </tr>`).join("")}
         </tbody>
       </table></div>`:`<div class="empty">Nog geen Pokémon-transacties.</div>`}
@@ -795,7 +1566,7 @@ function renderBudgets(){
 const ts=monthTransactions();
 $("budgets").innerHTML=`<div class="topbar"><div><h1>Budgetten</h1><div class="subtitle">Maandbudgetten voor ${monthName()}</div></div></div>
 <div class="card"><div class="section-title">Budget toevoegen</div><form id="budgetForm"><div class="form-grid"><div class="field"><label>Categorie</label><select id="budgetCat">${categories.filter(c=>!["Salaris","Freelance"].includes(c)).map(c=>`<option>${c}</option>`).join("")}</select></div><div class="field"><label>Budget per maand (€)</label><input id="budgetAmount" type="number" min="0.01" step=".01" required inputmode="decimal"></div></div><div class="form-actions"><button class="btn primary"><i data-lucide="plus"></i>Budget opslaan</button></div></form></div>
-<div class="card transactions"><div class="section-title">Jouw budgetten</div>${data.budgets.length?data.budgets.map((b,i)=>{const spent=ts.filter(t=>t.kind==="expense"&&t.category===b.category).reduce((s,t)=>s+Number(t.amount),0);const pct=b.amount>0?Math.min(100,spent/b.amount*100):0;return `<div class="goal"><div class="goal-top"><strong>${esc(b.category)}</strong><span>${euro(spent)} / ${euro(b.amount)}</span></div><div class="progress"><div style="width:${pct}%"></div></div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px" class="small"><span>${pct.toFixed(0)}% gebruikt</span><button class="icon-btn danger" data-budget-delete="${i}"><i data-lucide="trash-2"></i></button></div></div>`}).join(""):`<div class="empty">Nog geen budgetten ingesteld.</div>`}</div>`;
+<div class="card transactions"><div class="section-title">Jouw budgetten</div>${data.budgets.length?data.budgets.map((b,i)=>{const spent=ts.filter(t=>t.kind==="expense"&&t.category===b.category).reduce((s,t)=>s+Number(t.amount),0);const pct=b.amount>0?Math.min(100,spent/b.amount*100):0;return `<div class="goal"><div class="goal-top"><strong>${esc(b.category)}</strong><span>${protectedEuro(spent)} / ${protectedEuro(b.amount)}</span></div><div class="progress"><div style="width:${pct}%"></div></div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px" class="small"><span>${pct.toFixed(0)}% gebruikt</span><button class="icon-btn danger" data-budget-delete="${i}"><i data-lucide="trash-2"></i></button></div></div>`}).join(""):`<div class="empty">Nog geen budgetten ingesteld.</div>`}</div>`;
 $("budgetForm").onsubmit=e=>{e.preventDefault();const amount=Number($("budgetAmount").value);if(!Number.isFinite(amount)||amount<=0){notify("Vul een geldig budget in.");return}data.budgets.push({category:$("budgetCat").value,amount});saveAndRender()};
 document.querySelectorAll("[data-budget-delete]").forEach(b=>b.onclick=()=>{if(confirm("Budget verwijderen?")){data.budgets.splice(Number(b.dataset.budgetDelete),1);saveAndRender()}});
 }
@@ -807,10 +1578,10 @@ const costs=entries.filter(e=>e.kind==="expense").reduce((s,e)=>s+Number(e.amoun
 const balance=Number(data.dealplug.opening)+income-costs;
 $("dealplug").innerHTML=`
 <div class="topbar"><div><h1>DealPlugNL</h1><div class="subtitle">Inkomsten en kosten van je abonnementen</div></div></div>
-<div class="cards"><div class="card"><div class="stat-label"><i data-lucide="wallet"></i>Beginstand</div><div class="stat-value">${euro(data.dealplug.opening)}</div></div>
-<div class="card"><div class="stat-label"><i data-lucide="arrow-down-left"></i>Inkomsten</div><div class="stat-value positive">${euro(income)}</div></div>
-<div class="card"><div class="stat-label"><i data-lucide="arrow-up-right"></i>Kosten</div><div class="stat-value negative">${euro(costs)}</div></div>
-<div class="card"><div class="stat-label"><i data-lucide="calculator"></i>Huidige stand</div><div class="stat-value ${balance>=0?"positive":"negative"}">${euro(balance)}</div></div></div>
+<div class="cards"><div class="card"><div class="stat-label"><i data-lucide="wallet"></i>Beginstand</div><div class="stat-value">${protectedEuro(data.dealplug.opening)}</div></div>
+<div class="card"><div class="stat-label"><i data-lucide="arrow-down-left"></i>Inkomsten</div><div class="stat-value positive">${protectedEuro(income)}</div></div>
+<div class="card"><div class="stat-label"><i data-lucide="arrow-up-right"></i>Kosten</div><div class="stat-value negative">${protectedEuro(costs)}</div></div>
+<div class="card"><div class="stat-label"><i data-lucide="calculator"></i>Huidige stand</div><div class="stat-value ${balance>=0?"positive":"negative"}">${protectedEuro(balance)}</div></div></div>
 <div class="card"><div class="section-title">Beginstand instellen</div><div class="form-grid"><div class="field"><label>Beginstand (€)</label><input id="dpOpening" type="number" step=".01" inputmode="decimal" value="${Number(data.dealplug.opening).toFixed(2)}"></div></div><div class="form-actions"><button class="btn primary" id="saveDpOpening"><i data-lucide="save"></i>Beginstand opslaan</button></div></div>
 <div class="card"><div class="section-title">Inkomsten / kosten toevoegen</div><form id="dpForm"><div class="toggle"><button type="button" data-dpkind="income" class="active">Inkomst</button><button type="button" data-dpkind="expense">Kosten</button></div>
 <div class="form-grid"><div class="field"><label>Omschrijving</label><input id="dpDesc" required placeholder="Bijv. Spotify Premium"></div><div class="field"><label>Bedrag (€)</label><input id="dpAmount" required type="number" min="0.01" step=".01" inputmode="decimal"></div><div class="field"><label>Datum</label><input id="dpDate" type="date" value="${today()}" required></div></div><div class="form-actions"><button class="btn primary"><i data-lucide="plus"></i>Toevoegen</button></div></form></div>
