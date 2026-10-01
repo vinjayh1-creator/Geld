@@ -1853,6 +1853,15 @@ function renderCrypto(){
   };
 }
 
+function renderBudgets(){
+const ts=monthTransactions();
+$("budgets").innerHTML=`<div class="topbar"><div><h1>Budgetten</h1><div class="subtitle">Maandbudgetten voor ${monthName()}</div></div></div>
+<div class="card"><div class="section-title">Budget toevoegen</div><form id="budgetForm"><div class="form-grid"><div class="field"><label>Categorie</label><select id="budgetCat">${categories.filter(c=>!["Salaris","Freelance"].includes(c)).map(c=>`<option>${c}</option>`).join("")}</select></div><div class="field"><label>Budget per maand (€)</label><input id="budgetAmount" type="number" min="0.01" step=".01" required inputmode="decimal"></div></div><div class="form-actions"><button class="btn primary"><i data-lucide="plus"></i>Budget opslaan</button></div></form></div>
+<div class="card transactions"><div class="section-title">Jouw budgetten</div>${data.budgets.length?data.budgets.map((b,i)=>{const spent=ts.filter(t=>t.kind==="expense"&&t.category===b.category).reduce((s,t)=>s+Number(t.amount),0);const pct=b.amount>0?Math.min(100,spent/b.amount*100):0;return `<div class="goal"><div class="goal-top"><strong>${esc(b.category)}</strong><span>${protectedEuro(spent)} / ${protectedEuro(b.amount)}</span></div><div class="progress"><div style="width:${pct}%"></div></div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px" class="small"><span>${pct.toFixed(0)}% gebruikt</span><button class="icon-btn danger" data-budget-delete="${i}"><i data-lucide="trash-2"></i></button></div></div>`}).join(""):`<div class="empty">Nog geen budgetten ingesteld.</div>`}</div>`;
+$("budgetForm").onsubmit=e=>{e.preventDefault();const amount=Number($("budgetAmount").value);if(!Number.isFinite(amount)||amount<=0){notify("Vul een geldig budget in.");return}data.budgets.push({category:$("budgetCat").value,amount});saveAndRender()};
+document.querySelectorAll("[data-budget-delete]").forEach(b=>b.onclick=()=>{if(confirm("Budget verwijderen?")){data.budgets.splice(Number(b.dataset.budgetDelete),1);saveAndRender()}});
+}
+
 function renderDealPlug(){
 const entries=[...data.dealplug.entries].sort((a,b)=>new Date(b.date)-new Date(a.date));
 const income=entries.filter(e=>e.kind==="income").reduce((s,e)=>s+Number(e.amount),0);
