@@ -1386,9 +1386,11 @@ data.dealplug.entries.push({id:uid(),kind,amount,date:today(),description});save
 function transactionRow(t,full){
 const acc=accountById(t.accountId);
 const to=accountById(t.toAccountId);
-const sign=t.kind==="income"?"+":t.kind==="transfer"?"↔":"-";
-const cls=t.kind==="income"?"positive":t.kind==="expense"?"negative":"";
-return `<tr><td>${esc(t.description)}</td><td><span class="badge">${esc(t.category)}</span></td><td>${new Date(t.date).toLocaleDateString("nl-NL")}</td>${full?`<td>${esc(t.quickOnly?"Uitgavenregistratie":(acc?.name||"-"))}${t.kind==="transfer"&&to?` → ${esc(to.name)}`:""}</td>`:""}<td class="${cls}">${sign}${euro(t.amount)}</td>${full?`<td><div class="actions"><button data-edit="${t.id}" title="Bewerken"><i data-lucide="pencil"></i></button><button data-delete="${t.id}" class="danger" title="Verwijderen"><i data-lucide="trash-2"></i></button></div></td>`:""}</tr>`;
+const sign=t.kind==="income"?"+":t.kind==="transfer"?"↔":t.kind==="revolutAdjustment"?(t.direction==="add"?"+":"-"):"-";
+const cls=t.kind==="income"||t.kind==="revolutAdjustment"&&t.direction==="add"?"positive":t.kind==="expense"||t.kind==="revolutAdjustment"&&t.direction==="remove"?"negative":"";
+const accountLabel=t.kind==="revolutAdjustment"?({private:"Revolut privé",dealplug:"DealPlugNL",crypto:"Crypto / Aandelen"}[t.target]||"Revolut"):(t.quickOnly?"Uitgavenregistratie":(acc?.name||"-"));
+const categoryLabel=t.kind==="revolutAdjustment"?"Revolut mutatie":t.category;
+return `<tr><td>${esc(t.description)}</td><td><span class="badge">${esc(categoryLabel)}</span></td><td>${new Date(t.date).toLocaleDateString("nl-NL")}</td>${full?`<td>${esc(accountLabel)}${t.kind==="transfer"&&to?` → ${esc(to.name)}`:""}</td>`:""}<td class="${cls}">${sign}${euro(t.amount)}</td>${full?`<td><div class="actions"><button data-edit="${t.id}" title="Bewerken"><i data-lucide="pencil"></i></button><button data-delete="${t.id}" class="danger" title="Verwijderen"><i data-lucide="trash-2"></i></button></div></td>`:""}</tr>`;
 }
 
 function renderTransactions(){
@@ -1481,21 +1483,23 @@ function changeRevolutSubaccountAmount(target, amount, direction, note){
   const current=target==="private"?Number(snap.acc4||0):Number(snap.revolutSubaccounts[target]||0);
   const next=direction==="remove"?current-n:current+n;
   if(next<0){notify(`Onvoldoende saldo op ${label}.`);return}
-  if(target==="private") {
-    snap.acc4=next;
-  } else {
-    snap.revolutSubaccounts[target]=next;
-  }
-  data.revolutAdjustments=data.revolutAdjustments||[];
-  data.revolutAdjustments.push({
+  if(target==="private") snap.acc4=next;
+  else snap.revolutSubaccounts[target]=next;
+
+  const tx={
     id:uid(),
-    target,
+    description:String(note||label).trim()||label,
     amount:n,
+    date:today(),
+    category:"Revolut mutatie",
+    accountId:"revolut-subaccount",
+    kind:"revolutAdjustment",
+    target,
     direction,
     note:String(note||"").trim(),
-    date:today(),
     month
-  });
+  };
+  data.transactions.push(tx);
   persist();
   render();
   notify(`${euro(n)} ${direction==="remove"?"afgehaald van":"toegevoegd aan"} ${label}.`);
@@ -1508,18 +1512,11 @@ $("removeRevolutAmount").onclick=()=>{
   changeRevolutSubaccountAmount($("revolutAddTarget").value,$("revolutAddAmount").value,"remove",$("revolutAdjustmentNote").value);
 };
 document.querySelectorAll("[data-revolut-quick]").forEach(b=>b.onclick=()=>{
-  addRevolutSubaccountAmount(b.dataset.revolutQuick,500);
+  changeRevolutSubaccountAmount(b.dataset.revolutQuick,500,"add","");
 });
 document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editTransaction(b.dataset.edit));
 document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deleteTransaction(b.dataset.delete));
 
-const adjustments=(data.revolutAdjustments||[]).filter(a=>a.month===monthKey(currentMonth)).sort((a,b)=>new Date(b.date)-new Date(a.date));
-if(adjustments.length){
-  const card=document.createElement("div");
-  card.className="card transactions";
-  card.innerHTML=`<div class="section-title">Revolut mutaties</div><div class="table-wrap"><table class="table"><thead><tr><th>Rekening</th><th>Datum</th><th>Opmerking</th><th>Bedrag</th></tr></thead><tbody>${adjustments.map(a=>{const label=a.target==="private"?"Revolut privé":a.target==="dealplug"?"DealPlugNL":"Crypto / Aandelen";return `<tr><td>${esc(label)}</td><td>${new Date(a.date).toLocaleDateString("nl-NL")}</td><td>${esc(a.note||"-")}</td><td class="${a.direction==="add"?"positive":"negative"}">${a.direction==="add"?"+":"-"}${euro(a.amount)}</td></tr>`}).join("")}</tbody></table></div>`;
-  $("transactions").appendChild(card);
-}
 }
 
 function editTransaction(tid){
@@ -1527,6 +1524,20 @@ const t=data.transactions.find(x=>x.id===tid);if(!t)return;
 const val=prompt("Nieuw bedrag (€):",String(t.amount));
 if(val===null)return;
 const n=Number(val);if(!Number.isFinite(n)||n<=0){notify("Ongeldig bedrag.");return}
+if(t.kind==="revolutAdjustment"){
+  const snap=data.accountSnapshots?.[t.month];
+  if(!snap){notify("Rekeningstand niet gevonden.");return}
+  snap.revolutSubaccounts=snap.revolutSubaccounts||{};
+  const current=t.target==="private"?Number(snap.acc4||0):Number(snap.revolutSubaccounts[t.target]||0);
+  const oldEffect=t.direction==="add"?t.amount:-t.amount;
+  const newEffect=t.direction==="add"?n:-n;
+  const next=current-oldEffect+newEffect;
+  if(next<0){notify("Onvoldoende saldo voor deze wijziging.");return}
+  if(t.target==="private")snap.acc4=next;else snap.revolutSubaccounts[t.target]=next;
+  t.amount=n;
+  persist();render();
+  return;
+}
 if(t.kind==="transfer"){
 const from=accountById(t.accountId),to=accountById(t.toAccountId);
 if(!from||!to)return;
@@ -1543,7 +1554,15 @@ t.amount=n;saveAndRender();
 function deleteTransaction(tid){
 const t=data.transactions.find(x=>x.id===tid);if(!t)return;
 if(!confirm("Deze transactie verwijderen?"))return;
-if(t.kind==="transfer"){const from=accountById(t.accountId),to=accountById(t.toAccountId);if(from)from.balance+=t.amount;if(to)to.balance-=t.amount}
+if(t.kind==="revolutAdjustment"){
+  const snap=data.accountSnapshots?.[t.month];
+  if(snap){
+    snap.revolutSubaccounts=snap.revolutSubaccounts||{};
+    const current=t.target==="private"?Number(snap.acc4||0):Number(snap.revolutSubaccounts[t.target]||0);
+    const next=t.direction==="add"?current-t.amount:current+t.amount;
+    if(t.target==="private")snap.acc4=Math.max(0,next);else snap.revolutSubaccounts[t.target]=Math.max(0,next);
+  }
+}else if(t.kind==="transfer"){const from=accountById(t.accountId),to=accountById(t.toAccountId);if(from)from.balance+=t.amount;if(to)to.balance-=t.amount}
 data.transactions=data.transactions.filter(x=>x.id!==tid);saveAndRender();
 }
 
