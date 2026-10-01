@@ -1000,11 +1000,23 @@ nav button.active{background:var(--soft);color:var(--primary);}
   .bottom-nav{backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);}
 }
 </style>
+
+<style id="dashboard-account-font-equal">
+/* ABN Amro en Revolut in het dashboard exact dezelfde tekstgewicht */
+.dashboard-revolut-summary .account-left > div:last-child{font-weight:400;}
+.dashboard-revolut-summary .account-left > div:last-child strong{font-weight:400;}
+</style>
+
+<style id="brand-user-name">
+.brand-with-user{align-items:flex-start;}
+.brand-with-user > div{line-height:1.15;}
+.brand-user{font-size:11px;font-weight:500;color:var(--muted);margin-top:5px;letter-spacing:0;}
+</style>
 </head>
 <body>
 <div class="app">
 <aside>
-<div class="brand"><i data-lucide="wallet"></i>Budget Planner</div>
+<div class="brand brand-with-user"><i data-lucide="wallet"></i><div><div>Budget Planner</div><div class="brand-user">Yaniv</div></div></div>
 <nav>
 <button data-view="dashboard"><i data-lucide="layout-dashboard"></i>Dashboard</button>
 <button data-view="transactions"><i data-lucide="arrow-left-right"></i>Transacties</button>
@@ -1232,7 +1244,7 @@ $("dashboard").innerHTML=`
 <details class="dashboard-revolut-details">
 <summary class="account dashboard-revolut-summary">
 <div class="account-left"><div class="account-icon"><i data-lucide="wallet"></i></div><div><strong>Revolut</strong><div class="small">Klik om rekeningen te bekijken</div></div></div>
-<div style="display:flex;align-items:center;gap:6px"><div class="amount">${protectedEuro(revolutTotal(dashboardSnapshot))}</div><i data-lucide="chevron-right" class="revolut-summary-chevron"></i></div>
+<div class="amount">${protectedEuro(revolutTotal(dashboardSnapshot))}</div>
 </summary>
 <div class="dashboard-revolut-details-inner">
   <div class="small dashboard-subrow"><span>Revolut privé</span><strong>${protectedEuro(valForDashboard("private",dashboardSnapshot))}</strong></div>
@@ -1334,11 +1346,11 @@ ${(()=>{
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px">
     <div style="padding:11px;border:1px solid var(--border);border-radius:12px;background:var(--card)">
       <div class="small">Vaste kosten per maand</div>
-      <div class="negative" style="font-size:18px;font-weight:650;margin-top:4px">${(()=>{const monthly=data.recurring.filter(r=>r.kind==="expense").reduce((s,r)=>s+Number(r.amount||0),0); return protectedEuro(monthly)})()}</div>
+      <div class="negative" style="font-size:18px;font-weight:500;margin-top:4px">${(()=>{const monthly=data.recurring.filter(r=>r.kind==="expense").reduce((s,r)=>s+Number(r.amount||0),0); return protectedEuro(monthly)})()}</div>
     </div>
     <div style="padding:11px;border:1px solid var(--border);border-radius:12px">
       <div class="small">Loon</div>
-      <div class="positive" style="font-size:18px;font-weight:650;margin-top:4px">${(()=>{if(!data.weeklySalary?.enabled)return "Niet ingesteld"; const week=Math.min(5,Math.ceil(new Date().getDate()/7)); return protectedEuro(Number(data.weeklySalary.amount||0)*week)})()}</div>
+      <div class="positive" style="font-size:18px;font-weight:500;margin-top:4px">${(()=>{if(!data.weeklySalary?.enabled)return "Niet ingesteld"; const week=Math.min(5,Math.ceil(new Date().getDate()/7)); return protectedEuro(Number(data.weeklySalary.amount||0)*week)})()}</div>
     </div>
   </div>
   <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:11px">
