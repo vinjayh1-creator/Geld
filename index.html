@@ -245,6 +245,42 @@ h1{letter-spacing:-.035em}
 .snapshot-total strong,.snapshot-diff strong{font-size:13px}
 @media(max-width:700px){.account-snapshots-card{width:100%}}
 
+/* Compacte Revolut-standen bij Transacties */
+.revolut-balance-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;
+  margin-bottom:14px;
+}
+.revolut-balance-tile{
+  padding:8px 9px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:var(--surface-2,#f8fafc);
+  min-width:0;
+}
+.revolut-balance-tile div{
+  font-size:11px;
+  line-height:1.2;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.revolut-balance-tile strong{
+  display:block;
+  margin-top:3px;
+  font-size:14px;
+  line-height:1.2;
+  white-space:nowrap;
+}
+@media(max-width:700px){
+  .revolut-balance-grid{gap:5px;margin-bottom:12px}
+  .revolut-balance-tile{padding:7px 6px;border-radius:9px}
+  .revolut-balance-tile div{font-size:9px}
+  .revolut-balance-tile strong{font-size:12px;margin-top:2px}
+}
+
 /* Consistente ruimte rond DealPlugNL */
 #dashboard .dealplug-dashboard-card {
   margin-top: 16px !important;
@@ -953,8 +989,84 @@ html,body,#root,.app{
   border-bottom:1px solid var(--border);
 }
 .dashboard-subrow:last-child{border-bottom:0}
+
+.dashboard-account-transactions{margin-top:4px;}
+.dashboard-account-tx-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:8px 0;
+  border-bottom:1px solid var(--border);
+}
+.dashboard-account-tx-row:last-child{border-bottom:0;}
+.dashboard-account-tx-row > div{min-width:0;}
+.dashboard-account-tx-row > div > strong{
+  display:block;
+  font-size:11px;
+  font-weight:600;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.dashboard-account-tx-row > div > span{
+  display:block;
+  margin-top:2px;
+  font-size:10px;
+  color:var(--muted);
+}
+.dashboard-account-tx-row > strong{
+  flex:0 0 auto;
+  font-size:11px;
+  font-weight:650;
+  white-space:nowrap;
+}
 </style>
 
+
+<style id="dashboard-top-wealth-visuals">
+.dashboard-top-cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.dashboard-stat-card{padding:17px !important;min-width:0;}
+.dashboard-stat-card .stat-label{display:flex;align-items:center;gap:8px;font-size:12px;}
+.dashboard-stat-icon{width:30px;height:30px;border-radius:9px;background:var(--soft);color:var(--primary);display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.dashboard-stat-icon svg{width:16px;height:16px;}
+.dashboard-stat-card .stat-value{font-size:25px;margin-top:10px;}
+.dashboard-tile-change{display:flex;align-items:center;gap:4px;margin-top:7px;font-size:10px;font-weight:650;}
+.dashboard-tile-change svg{width:13px;height:13px;}
+.dashboard-tile-change.up{color:var(--green)}
+.dashboard-tile-change.down{color:var(--red)}
+.dashboard-tile-change.neutral{color:var(--muted)}
+.dashboard-wealth-card{margin-top:16px;padding:18px !important;}
+.dashboard-wealth-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;}
+.dashboard-wealth-header .section-title{margin-bottom:3px;}
+.dashboard-wealth-current{text-align:right;min-width:110px;}
+.dashboard-wealth-current span{display:block;color:var(--muted);font-size:10px;}
+.dashboard-wealth-current strong{display:block;font-size:20px;font-weight:600;margin-top:2px;}
+.dashboard-wealth-chart{height:205px;margin-top:12px;overflow:hidden;}
+.wealth-chart-svg{display:block;width:100%;height:100%;overflow:visible;}
+.wealth-empty{height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;text-align:center;padding:20px;}
+.dashboard-wealth-footer{display:flex;align-items:flex-end;gap:20px;border-top:1px solid var(--border);padding-top:10px;}
+.dashboard-wealth-footer>div:first-child{display:grid;gap:2px;}
+.dashboard-wealth-footer strong{font-size:15px;font-weight:600;}
+.dashboard-wealth-period{margin-left:auto;color:var(--muted);font-size:10px;}
+.dashboard-wealth-badge{display:inline-flex;align-items:center;gap:4px;padding:5px 8px;border-radius:8px;font-size:10px;font-weight:650;}
+.dashboard-wealth-badge.up{background:color-mix(in srgb,var(--green) 10%,var(--card));color:var(--green)}
+.dashboard-wealth-badge.down{background:color-mix(in srgb,var(--red) 10%,var(--card));color:var(--red)}
+@media(max-width:900px){
+ .dashboard-top-cards{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:700px){
+ .dashboard-top-cards{grid-template-columns:1fr 1fr;gap:10px;}
+ .dashboard-stat-card{padding:13px !important;}
+ .dashboard-stat-card .stat-value{font-size:20px;margin-top:8px;}
+ .dashboard-stat-label{font-size:11px;}
+ .dashboard-wealth-card{margin-top:12px;padding:14px !important;}
+ .dashboard-wealth-chart{height:170px;}
+ .dashboard-wealth-current strong{font-size:17px;}
+ .dashboard-wealth-footer{gap:10px;flex-wrap:wrap;}
+ .dashboard-wealth-period{margin-left:0;}
+}
+</style>
 
 <style id="dashboard-spacing-v45">
 /* Consistente tussenruimte tussen dashboardtegels */
@@ -1045,6 +1157,135 @@ nav button.active{background:var(--soft);color:var(--primary);}
 #dashboard .dashboard-crypto-pokemon-card{margin-top:16px !important;}
 #dashboard .dashboard-crypto-pokemon-card .section-title svg{width:18px;height:18px;color:var(--primary);}
 @media(max-width:700px){#dashboard .dashboard-crypto-pokemon-card{margin-top:16px !important;} .dashboard-investment-grid{grid-template-columns:1fr 1fr !important;}}
+</style>
+
+<style id="transaction-account-tiles-dark-fix">
+/* Donkere modus: rekeningtegels bij Transacties */
+[data-theme="dark"] #transactions .revolut-balance-grid .revolut-balance-tile {
+  background:var(--card) !important;
+  color:var(--text) !important;
+  border-color:var(--border) !important;
+}
+[data-theme="dark"] #transactions .revolut-balance-grid .revolut-balance-tile * {
+  color:var(--text) !important;
+}
+[data-theme="dark"] #transactions .revolut-balance-grid .revolut-balance-tile .small {
+  color:var(--muted) !important;
+}
+[data-theme="dark"] #transactions .revolut-balance-grid .revolut-balance-tile .stat-value,
+[data-theme="dark"] #transactions .revolut-balance-grid .revolut-balance-tile strong {
+  color:var(--text) !important;
+}
+</style>
+
+<style id="compact-transaction-toggle-style">
+.compact-transaction-toggle{display:inline-flex;width:auto;max-width:100%;padding:3px;gap:3px;border-radius:10px}
+.compact-transaction-toggle button{font-size:12px;padding:7px 12px;min-height:32px;line-height:1.1}
+@media (max-width:600px){.compact-transaction-toggle button{font-size:11px;padding:6px 10px;min-height:30px}}
+</style>
+
+<style id="compact-transaction-forms">
+/* Compactere invoerblokken op Transacties, vooral op mobiel */
+#transactions #transactionForm .field label,
+#transactions #transactionForm .field input,
+#transactions #transactionForm .field select{font-size:12px}
+#transactions #transactionForm .field input,
+#transactions #transactionForm .field select{padding:8px 10px;min-height:36px}
+#transactions #transactionForm .form-grid{gap:10px}
+#transactions #transactionForm .form-actions{margin-top:10px}
+#transactions #transactionForm .btn{padding:8px 12px;font-size:12px}
+#transactions #transactionForm > div[style*="border-top"]{margin-top:12px!important;padding-top:12px!important}
+#transactions #transactionForm > div[style*="border-top"] .section-title{font-size:14px}
+#transactions #transactionForm > div[style*="border-top"] .small{font-size:11px;margin-bottom:8px!important}
+#transactions #transactionForm > div[style*="border-top"] .revolut-balance-grid{gap:8px}
+#transactions #transactionForm > div[style*="border-top"] .revolut-balance-tile{padding:8px 10px;border-radius:10px}
+#transactions #transactionForm > div[style*="border-top"] .revolut-balance-tile div{font-size:10px}
+#transactions #transactionForm > div[style*="border-top"] .revolut-balance-tile strong{font-size:15px}
+#transactions #transactionForm > div[style*="border-top"] .form-grid{gap:10px}
+@media(max-width:600px){
+  #transactions #transactionForm .form-grid{gap:8px}
+  #transactions #transactionForm .field input,
+  #transactions #transactionForm .field select{padding:7px 9px;min-height:34px}
+  #transactions #transactionForm > div[style*="border-top"] .revolut-balance-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  #transactions #transactionForm > div[style*="border-top"] .revolut-balance-tile{padding:7px 8px}
+}
+</style>
+
+<style id="compact-current-account-tiles">
+/* Compacte tegels voor huidige rekeningstanden op mobiel en desktop */
+.revolut-balance-grid .revolut-balance-tile {
+  padding: 10px 12px !important;
+  min-height: 0 !important;
+}
+.revolut-balance-grid .revolut-balance-tile .small {
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+}
+.revolut-balance-grid .revolut-balance-tile .stat-value {
+  font-size: 18px !important;
+  line-height: 1.15 !important;
+  margin-top: 3px !important;
+}
+@media (max-width: 700px) {
+  .revolut-balance-grid {
+    gap: 8px !important;
+  }
+  .revolut-balance-grid .revolut-balance-tile {
+    padding: 8px 10px !important;
+    border-radius: 12px !important;
+  }
+  .revolut-balance-grid .revolut-balance-tile .stat-value {
+    font-size: 16px !important;
+  }
+}
+<style id="dashboard-revolut-subaccount-style">
+/* Strakke subrekeningen onder Revolut op het Dashboard */
+#dashboard .revolut-balance-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  margin:10px 0 0;
+}
+#dashboard .revolut-balance-tile{
+  padding:9px 10px !important;
+  border:1px solid var(--border) !important;
+  border-radius:10px !important;
+  background:var(--card) !important;
+  box-shadow:none !important;
+  min-height:0 !important;
+}
+#dashboard .revolut-balance-tile div{
+  color:var(--muted) !important;
+  font-size:10px !important;
+  font-weight:500;
+}
+#dashboard .revolut-balance-tile strong{
+  color:var(--text) !important;
+  font-size:14px !important;
+  font-weight:600;
+  margin-top:3px;
+}
+@media(max-width:700px){
+  #dashboard .revolut-balance-grid{gap:6px}
+  #dashboard .revolut-balance-tile{padding:8px !important;border-radius:9px !important}
+  #dashboard .revolut-balance-tile div{font-size:9px !important}
+  #dashboard .revolut-balance-tile strong{font-size:12px !important}
+}
+</style>
+</style>
+
+<style id="dealplug-sale-form">
+#dealplug .dp-mode-toggle{display:flex;gap:6px;flex-wrap:wrap}
+#dealplug .dp-mode-toggle button{flex:0 0 auto;padding:7px 13px;font-size:12px}
+#dealplug #dpSaleFields .small{line-height:1.45}
+</style>
+
+<style id="transaction-date-time-display">
+.transaction-date{display:inline-flex;flex-direction:column;line-height:1.2;}
+.transaction-date small{display:block;font-size:9px;color:var(--muted);font-weight:500;margin-top:2px;}
+#dashboard .recent-overview-grid .table td:nth-child(3){white-space:nowrap;}
+@media(max-width:700px){
+  .transaction-date small{font-size:8px;}
+}
 </style>
 </head>
 <body>
@@ -1204,17 +1445,20 @@ function processRecurringTransactions(){
 const now=new Date();
 const realMonth=monthKey(now);
 const day=now.getDate();
+const lastDay=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
 let changed=false;
 data.recurring.forEach(r=>{
 const marker=realMonth+"_"+r.id;
 if(data.processedRecurring[marker])return;
-if(day<Number(r.day||1))return;
+const scheduledDay=Math.min(31,Math.max(1,Number(r.day||1)));
+const effectiveDay=Math.min(scheduledDay,lastDay);
+if(day<effectiveDay)return;
 const acc=accountById(r.accountId);
 if(!acc)return;
 const amount=Number(r.amount)||0;
 if(amount<=0)return;
 if(r.kind==="expense"&&acc.balance<amount)return;
-const txDate=new Date(now.getFullYear(),now.getMonth(),Number(r.day||1));
+const txDate=new Date(now.getFullYear(),now.getMonth(),effectiveDay);
 const tx={id:uid(),description:r.description,amount,date:dateKey(txDate),category:r.category,accountId:r.accountId,kind:r.kind,recurringId:r.id};
 data.transactions.push(tx);
 acc.balance += r.kind==="income"?amount:-amount;
@@ -1233,31 +1477,146 @@ lucide.createIcons();
 }
 
 function valForDashboard(type,snapshot){
-  if(type==="private"){
-    const subs=snapshot?.revolutSubaccounts;
-    if(subs && Object.prototype.hasOwnProperty.call(subs,"private")) return Number(subs.private||0);
-    return Number(snapshot?.acc4||0);
-  }
+  if(type==="private") return revolutPrivateBalance(snapshot);
   return 0;
+}
+
+function monthlyAccountEffect(month,ids){
+  const ts=Array.isArray(data.transactions)?data.transactions:[];
+  return ts.filter(t=>monthKey(t.date)===month).reduce((sum,t)=>{
+    const amount=Number(t.amount||0);
+    if(t.kind==="income" && ids.includes(t.accountId)) return sum+amount;
+    if(t.kind==="expense" && ids.includes(t.accountId)) return sum-amount;
+    if(t.kind==="transfer"){
+      if(ids.includes(t.accountId)) sum-=amount;
+      if(ids.includes(t.toAccountId)) sum+=amount;
+    }
+    return sum;
+  },0);
+}
+
+function displayedAccountBalances(month){
+  const key=month||monthKey(currentMonth);
+  const snap=data.accountSnapshots?.[key]||{};
+
+  // Actuele saldi zijn leidend voor het scherm. De maandstand blijft alleen
+  // de historische referentie en wordt nooit aangepast door overboekingen.
+  // ABN en Revolut privé hebben een echte account-balance; DealPlug/Crypto
+  // worden vanuit hun maandstand + mutaties berekend.
+  const abnAccount=accountById("acc2");
+  const revolutAccount=accountById("acc4");
+  const realCurrentMonth=monthKey(new Date());
+  const isCurrentMonth=key===realCurrentMonth;
+
+  // Voor de huidige maand gebruiken we de actuele rekeningstatus.
+  // Voor historische maanden gebruiken we juist de opgeslagen maandstand.
+  // Zo overschrijft een actuele rekeningstand nooit een eerder opgeslagen maandstand.
+  const abn=isCurrentMonth && abnAccount
+    ? Number(abnAccount.balance||0)
+    : Number(snap.acc1||0);
+
+  const privateRevolut=isCurrentMonth && revolutAccount
+    ? Number(revolutAccount.balance||0)
+    : Number(snap.acc4||0);
+
+  const monthTransfers=(Array.isArray(data.transactions)?data.transactions:[])
+    .filter(t=>t.kind==="revolutTransfer" && (t.month===key || monthKey(t.date)===key));
+
+  const dealplugBase=Number(snap.revolutSubaccounts?.dealplug||0);
+  const cryptoBase=Number(snap.revolutSubaccounts?.crypto||0);
+
+  const dealplugTransfers=monthTransfers.reduce((sum,t)=>{
+    const n=Number(t.amount||0);
+    if(t.fromTarget==="dealplug") return sum-n;
+    if(t.toTarget==="dealplug") return sum+n;
+    return sum;
+  },0);
+  const cryptoTransfers=monthTransfers.reduce((sum,t)=>{
+    const n=Number(t.amount||0);
+    if(t.fromTarget==="crypto") return sum-n;
+    if(t.toTarget==="crypto") return sum+n;
+    return sum;
+  },0);
+
+  const dealplug=dealplugBase+dealplugTransfers+dealplugNetForMonth(key);
+  const crypto=cryptoBase+cryptoTransfers;
+  // Crypto / Aandelen is een aparte subrekening binnen het totale Revolut-
+  // vermogen. Het bedrag wordt dus wel meegenomen in het Revolut-totaal,
+  // maar blijft afzonderlijk zichtbaar en wordt niet vermengd met de andere
+  // subrekeningen.
+  const revolut=privateRevolut+dealplug+crypto;
+
+  return {abn,privateRevolut,dealplug,crypto,revolut,total:abn+revolut};
+}
+
+function dashboardTransactionTime(t){
+  // Nieuwe transacties krijgen een uid die begint met Date.now() in base36.
+  // Alleen de eerste 8 tekens horen bij de timestamp; de rest is willekeurige
+  // tekst. Door niet de volledige id te parsen voorkomen we een ongeldige datum.
+  const rawId=String(t?.id||"").replace(/^dp_/,'');
+  const timestamp=parseInt(rawId.slice(0,8),36);
+  if(Number.isFinite(timestamp) && timestamp>100000000000) return timestamp;
+
+  // Ook oudere transacties kunnen een expliciete aanmaaktijd bevatten.
+  const explicitTime=t?.createdAt||t?.timestamp||t?.created_at;
+  if(explicitTime!==undefined && explicitTime!==null){
+    const explicitParsed=typeof explicitTime==="number"
+      ? explicitTime
+      : new Date(explicitTime).getTime();
+    if(Number.isFinite(explicitParsed) && explicitParsed>0) return explicitParsed;
+  }
+
+  const parsedDate=new Date(t?.date).getTime();
+  return Number.isFinite(parsedDate)?parsedDate:0;
+}
+
+function dashboardTransactionDateText(t){
+  const raw=t?.date;
+  const parsed=new Date(raw);
+  if(!Number.isNaN(parsed.getTime())){
+    return parsed.toLocaleDateString("nl-NL",{day:"2-digit",month:"2-digit",year:"numeric"});
+  }
+  return "Datum onbekend";
 }
 
 function renderDashboard(){
 const ts=monthTransactions();
-const income=ts.filter(t=>t.kind==="income").reduce((s,t)=>s+Number(t.amount),0);
-const expenses=ts.filter(t=>t.kind==="expense").reduce((s,t)=>s+Number(t.amount),0);
+const incomeTransactions=ts.filter(t=>t.kind==="income").reduce((s,t)=>s+Number(t.amount),0);
+const expenseTransactions=ts.filter(t=>t.kind==="expense").reduce((s,t)=>s+Number(t.amount),0);
+const dealplugMonthEntries=Array.isArray(data.dealplug?.entries)
+  ? data.dealplug.entries.filter(e=>monthKey(e.date)===monthKey(currentMonth))
+  : [];
+const dealplugMonthIncome=dealplugMonthEntries.filter(e=>e.kind==="income").reduce((s,e)=>s+Number(e.amount||0),0);
+const dealplugMonthCosts=dealplugMonthEntries.reduce((s,e)=>{
+  if(e.dealplugSale) return s+Number(e.cost||0);
+  if(e.kind==="expense"||e.kind==="cost"||e.kind==="kosten") return s+Number(e.amount||0);
+  return s;
+},0);
+// DealPlugNL-verkopen en inkopen/kosten tellen mee in de maandtotalen op het dashboard.
+const income=incomeTransactions+dealplugMonthIncome;
+const expenses=expenseTransactions+dealplugMonthCosts;
 const dashboardSnapshotKey=monthKey(currentMonth);
 const dashboardSnapshot=data.accountSnapshots?.[dashboardSnapshotKey]||{};
 const hasDashboardSnapshot=Object.prototype.hasOwnProperty.call(dashboardSnapshot,"acc1")||Object.prototype.hasOwnProperty.call(dashboardSnapshot,"acc4");
 const accountStand=hasDashboardSnapshot
-  ? Number(dashboardSnapshot.acc1||0)+revolutTotal(dashboardSnapshot)
+  ? Number(dashboardSnapshot.acc1||0)+revolutTotal(dashboardSnapshot,dashboardSnapshotKey)
   : data.accounts.reduce((s,a)=>s+Number(a.balance),0);
 // Beschikbaar geld = opgeslagen maandstand + inkomsten - uitgaven.
 // De handmatige rekeningstand zelf blijft ongewijzigd door transacties.
-const cash=accountStand+(income-expenses);
+const cash=accountStand+(incomeTransactions-expenseTransactions);
 const net=income-expenses;
+// Laat gewone transacties ook direct terugkomen in de weergegeven rekeningstand.
+// Het maandelijkse snapshot blijft het uitgangspunt; de transacties van deze maand worden daarop toegepast.
+const displayedBalances=displayedAccountBalances(dashboardSnapshotKey);
+const dashboardAbnBalance=displayedBalances.abn;
+const dashboardRevolutBalance=displayedBalances.revolut;
 const dealplugEntries=Array.isArray(data.dealplug?.entries)?data.dealplug.entries:[];
 const dpIncome=dealplugEntries.filter(e=>e.kind==="income").reduce((s,e)=>s+Number(e.amount||0),0);
-const dpCosts=dealplugEntries.filter(e=>e.kind==="expense"||e.kind==="cost"||e.kind==="kosten").reduce((s,e)=>s+Number(e.amount||0),0);
+const dpCosts=dealplugEntries.reduce((s,e)=>{
+  if(e.dealplugSale) return s+Number(e.cost||0);
+  if(e.kind==="expense"||e.kind==="cost"||e.kind==="kosten") return s+Number(e.amount||0);
+  return s;
+},0);
 const dpBalance=Number(data.dealplug.opening)+dpIncome-dpCosts;
 const dashboardCryptoEntries=Array.isArray(data.cryptoEntries)?data.cryptoEntries:[];
 const dashboardCryptoInvested=dashboardCryptoEntries.filter(e=>(e.assetType||"crypto")==="crypto"&&e.type==="in").reduce((s,e)=>s+Number(e.amount||0),0);
@@ -1268,36 +1627,247 @@ const dashboardPokemonInvested=dashboardCryptoEntries.filter(e=>(e.assetType||"c
 const dashboardPokemonCashouts=dashboardCryptoEntries.filter(e=>(e.assetType||"crypto")==="pokemon"&&e.type==="out").reduce((s,e)=>s+Number(e.amount||0),0);
 const dashboardPokemonResult=dashboardPokemonCashouts-dashboardPokemonInvested;
 const dashboardPokemonOpen=Math.max(0,dashboardPokemonInvested-dashboardPokemonCashouts);
-const recent=[...ts].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,6);
+// Laatste transacties worden hieronder samengesteld uit zowel gewone rekeningtransacties
+// als DealPlugNL-mutaties. Daardoor verschijnt een verkoop ook direct op het dashboard.
+
+// Laatste transacties voor de rekeningtegel op het dashboard.
+// Belangrijk: dit zijn werkelijk de laatste transacties over ALLE maanden,
+// niet alleen transacties uit de huidige maand. DealPlugNL-verkopen staan
+// apart opgeslagen en worden hier als dashboard-transactie toegevoegd.
+const allDashboardDealplugTransactions=(Array.isArray(data.dealplug?.entries)?data.dealplug.entries:[])
+  .map(e=>({
+    id:`dp_${e.id}`,
+    description:e.description||"DealPlugNL",
+    amount:Number(e.amount||0),
+    date:e.date,
+    category:e.dealplugSale?"DealPlugNL verkoop":(e.category||"DealPlugNL"),
+    accountId:"acc4",
+    kind:e.kind==="income"?"income":"expense",
+    dashboardSource:"DealPlugNL"
+  }));
+const allDashboardTransactions=[...data.transactions,...allDashboardDealplugTransactions];
+
+// We nemen maximaal de laatste 3 DealPlugNL-mutaties mee, maar sorteren daarna
+// ALLE transacties samen op echte aanmaaktijd. De uid() van de app begint met
+// Date.now() en bevat daardoor de exacte aanmaaktijd. Zo staat de allerlaatste
+// transactie die je hebt gemaakt altijd echt bovenaan, ook als meerdere
+// transacties dezelfde datum hebben.
+const recentDealplugTransactions=[...allDashboardDealplugTransactions]
+  .sort((a,b)=>{
+    const dateDiff=new Date(b.date)-new Date(a.date);
+    if(dateDiff!==0)return dateDiff;
+    return String(b.id||"").localeCompare(String(a.id||""));
+  })
+  .slice(0,3);
+const recentAccountTransactions=data.transactions
+  .filter(t=>t.accountId);
+
+// Eerst de laatste 3 DealPlugNL-mutaties + alle rekeningtransacties verzamelen,
+// daarna pas gezamenlijk sorteren op datum/tijd.
+const recent=[...recentDealplugTransactions,...recentAccountTransactions]
+  .sort((a,b)=>{
+    const timeDiff=dashboardTransactionTime(b)-dashboardTransactionTime(a);
+    if(timeDiff!==0)return timeDiff;
+    const dateDiff=new Date(b.date)-new Date(a.date);
+    if(dateDiff!==0)return dateDiff;
+    return String(b.id||"").localeCompare(String(a.id||""));
+  })
+  .slice(0,10);
+
+const abnRecentTransactions=allDashboardTransactions
+  .filter(t=>t.accountId==="acc1"||t.accountId==="acc2"||t.toAccountId==="acc1"||t.toAccountId==="acc2")
+  .sort((a,b)=>{
+    const timeDiff=dashboardTransactionTime(b)-dashboardTransactionTime(a);
+    if(timeDiff!==0)return timeDiff;
+    const dateDiff=new Date(b.date)-new Date(a.date);
+    if(dateDiff!==0)return dateDiff;
+    return String(b.id||"").localeCompare(String(a.id||""));
+  })
+  .slice(0,3);
+
+const dashboardSortTime=(t)=>{
+  const v=dashboardTransactionTime(t);
+  return Number.isFinite(v)&&v>0?v:new Date(t.date||0).getTime();
+};
+const sortDashboardTransactions=(arr)=>arr.sort((a,b)=>dashboardSortTime(b)-dashboardSortTime(a));
+
+// Per Revolut-rekening de laatste 3 transacties.
+// Revolut privé = acc4 + mutaties/overboekingen naar privé.
+// DealPlugNL = DealPlugNL-verkopen/kosten + Revolut-mutaties/overboekingen.
+// Crypto/Aandelen = crypto-mutaties + Revolut-mutaties/overboekingen.
+const revolutPrivateRecentTransactions=sortDashboardTransactions(allDashboardTransactions.filter(t=>
+  ((t.accountId==="acc4"||t.toAccountId==="acc4") && t.dashboardSource!=="DealPlugNL" && t.kind!=="revolutAdjustment") ||
+  (t.kind==="revolutAdjustment" && t.target==="private") ||
+  (t.kind==="revolutTransfer" && (t.fromTarget==="private"||t.toTarget==="private"))
+)).slice(0,3);
+const dealplugRecentTransactions=sortDashboardTransactions(allDashboardTransactions.filter(t=>
+  t.dashboardSource==="DealPlugNL" ||
+  (t.kind==="revolutAdjustment" && t.target==="dealplug") ||
+  (t.kind==="revolutTransfer" && (t.fromTarget==="dealplug"||t.toTarget==="dealplug"))
+)).slice(0,3);
+// Crypto / Aandelen is een aparte geldrekening binnen Revolut.
+// Belangrijk: de administratie uit het tabblad Crypto/Pokemon (data.cryptoEntries)
+// hoort hier NIET bij. Alleen geldmutaties van de aparte rekening zelf worden getoond.
+const cryptoRecentTransactions=sortDashboardTransactions(
+  allDashboardTransactions.filter(t=>
+    (t.kind==="revolutAdjustment" && t.target==="crypto") ||
+    (t.kind==="revolutTransfer" && (t.fromTarget==="crypto"||t.toTarget==="crypto"))
+  )
+).slice(0,3);
+const compactAccountTransaction=(t)=>{
+  const amount=Number(t.amount||0);
+  const isIncome=t.kind==="income";
+  const isTransfer=t.kind==="transfer"||t.kind==="revolutTransfer";
+  const sign=isIncome?"+":isTransfer?"↔":"-";
+  const cls=isIncome?"positive":isTransfer?"":"negative";
+  const source=t.dashboardSource||({private:"Privé",dealplug:"DealPlugNL",crypto:"Crypto / Pokémon"}[t.target]||"");
+  const sourceText=source?` · ${esc(source)}`:"";
+  const txTime=dashboardTransactionTime(t);
+  const timeText=Number.isFinite(txTime)&&txTime>0?new Date(txTime).toLocaleTimeString("nl-NL",{hour:"2-digit",minute:"2-digit"}):"";
+  return `<div class="dashboard-account-tx-row"><div><strong>${esc(t.description||"Transactie")}</strong><span>${dashboardTransactionDateText(t)}${timeText?` · ${timeText}`:""}${sourceText}</span></div><strong class="${cls}">${sign}${euro(amount)}</strong></div>`;
+};
 
 const dashboardSnapshotLabel=new Date(Number(dashboardSnapshotKey.slice(0,4)),Number(dashboardSnapshotKey.slice(5,7))-1,1).toLocaleDateString("nl-NL",{month:"long",year:"numeric"});
+
+// Visuele vermogensontwikkeling: gebruik alleen werkelijk opgeslagen maandstanden
+// en voeg voor de huidige maand de actuele dashboardstand toe.
+const wealthPoints=[];
+for(let i=5;i>=0;i--){
+  const d=new Date(currentMonth);
+  d.setMonth(d.getMonth()-i);
+  const key=monthKey(d);
+  const snap=data.accountSnapshots?.[key];
+  if(snap && (Object.prototype.hasOwnProperty.call(snap,"acc1") || Object.prototype.hasOwnProperty.call(snap,"acc4"))){
+    const value=Number(snap.acc1||0)+revolutTotal(snap,key);
+    wealthPoints.push({key,value,label:d.toLocaleDateString("nl-NL",{month:"short"}).replace(".","")});
+  }
+}
+const currentWealth=Number(dashboardAbnBalance||0)+Number(dashboardRevolutBalance||0);
+if(!wealthPoints.some(p=>p.key===dashboardSnapshotKey)){
+  wealthPoints.push({key:dashboardSnapshotKey,value:currentWealth,label:new Date(currentMonth).toLocaleDateString("nl-NL",{month:"short"}).replace(".","")});
+}else{
+  const currentPoint=wealthPoints.find(p=>p.key===dashboardSnapshotKey);
+  if(currentPoint) currentPoint.value=currentWealth;
+}
+const wealthMax=Math.max(...wealthPoints.map(p=>p.value),0);
+const wealthMin=Math.min(...wealthPoints.map(p=>p.value),0);
+const wealthRange=Math.max(wealthMax-wealthMin,1);
+const wealthChange=wealthPoints.length>1?wealthPoints[wealthPoints.length-1].value-wealthPoints[wealthPoints.length-2].value:0;
+const wealthChangePct=wealthPoints.length>1 && wealthPoints[wealthPoints.length-2].value!==0
+  ? (wealthChange/wealthPoints[wealthPoints.length-2].value)*100 : 0;
+const wealthSvg=wealthPoints.length>1?(()=>{
+  const w=760,h=190,padX=22,padY=20;
+  const x=i=>padX+(i/(wealthPoints.length-1))*(w-padX*2);
+  const y=v=>h-padY-((v-wealthMin)/wealthRange)*(h-padY*2);
+  const points=wealthPoints.map((p,i)=>`${x(i).toFixed(1)},${y(p.value).toFixed(1)}`).join(" ");
+  const area=`${padX},${h-padY} ${points} ${x(wealthPoints.length-1).toFixed(1)},${h-padY}`;
+  return `<svg class="wealth-chart-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-label="Vermogensontwikkeling">
+    <defs><linearGradient id="wealthFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--primary)" stop-opacity=".22"/><stop offset="100%" stop-color="var(--primary)" stop-opacity="0"/></linearGradient></defs>
+    <line x1="${padX}" y1="${h-padY}" x2="${w-padX}" y2="${h-padY}" stroke="var(--border)"/>
+    <polygon points="${area}" fill="url(#wealthFill)"/>
+    <polyline points="${points}" fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    ${wealthPoints.map((p,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="4" fill="var(--card)" stroke="var(--primary)" stroke-width="2"><title>${esc(p.label)}: ${euro(p.value)}</title></circle>`).join("")}
+  </svg>`;
+})():`<div class="wealth-empty">Sla minimaal twee maandstanden op om je vermogensontwikkeling te zien.</div>`;
+
+const previousDateForTiles=new Date(currentMonth);
+previousDateForTiles.setMonth(previousDateForTiles.getMonth()-1);
+const previousKeyForTiles=monthKey(previousDateForTiles);
+const previousSnapForTiles=data.accountSnapshots?.[previousKeyForTiles];
+const previousWealthForTiles=previousSnapForTiles
+  ? Number(previousSnapForTiles.acc1||0)+revolutTotal(previousSnapForTiles,previousKeyForTiles)
+  : null;
+const cashChange=previousWealthForTiles===null?null:currentWealth-previousWealthForTiles;
+const tileChange=(value,previousValue)=>{
+  if(previousValue===null || !Number.isFinite(previousValue) || previousValue===0)return `<span class="dashboard-tile-change neutral"><i data-lucide="minus"></i>Geen vorige maand</span>`;
+  const diff=value-previousValue;
+  const pct=(diff/Math.abs(previousValue))*100;
+  const up=diff>=0;
+  return `<span class="dashboard-tile-change ${up?"up":"down"}"><i data-lucide="${up?"trending-up":"trending-down"}"></i>${diff>=0?"+":"-"}${euro(Math.abs(diff))} · ${diff>=0?"+":"-"}${Math.abs(pct).toFixed(0)}%</span>`;
+};
+
+const previousIncomeForTiles=previousSnapForTiles?(()=>{
+  const monthTs=data.transactions.filter(t=>monthKey(t.date)===previousKeyForTiles);
+  const normal=monthTs.filter(t=>t.kind==="income").reduce((s,t)=>s+Number(t.amount||0),0);
+  const dp=(data.dealplug?.entries||[]).filter(e=>monthKey(e.date)===previousKeyForTiles&&e.kind==="income").reduce((s,e)=>s+Number(e.amount||0),0);
+  return normal+dp;
+})():null;
+const previousExpenseForTiles=previousSnapForTiles?(()=>{
+  const monthTs=data.transactions.filter(t=>monthKey(t.date)===previousKeyForTiles);
+  const normal=monthTs.filter(t=>t.kind==="expense").reduce((s,t)=>s+Number(t.amount||0),0);
+  const dp=(data.dealplug?.entries||[]).filter(e=>monthKey(e.date)===previousKeyForTiles).reduce((s,e)=>e.dealplugSale?s+Number(e.cost||0):(e.kind==="expense"||e.kind==="cost"||e.kind==="kosten"?s+Number(e.amount||0):s),0);
+  return normal+dp;
+})():null;
+const previousNetForTiles=previousIncomeForTiles===null?null:previousIncomeForTiles-previousExpenseForTiles;
+
 $("dashboard").innerHTML=`
 <div class="topbar"><div><h1>Dashboard</h1><div class="subtitle">Je financiële overzicht</div></div>
 <div class="month-nav"><button class="icon-btn" id="prevMonth"><i data-lucide="chevron-left"></i></button><strong style="min-width:145px;text-align:center;text-transform:capitalize">${monthName()}</strong><button class="icon-btn" id="nextMonth"><i data-lucide="chevron-right"></i></button></div></div>
-<div class="cards">
-<div class="card"><div class="stat-label"><i data-lucide="wallet"></i>Beschikbaar geld</div><div class="stat-value">${protectedEuro(cash)}</div></div>
-<div class="card"><div class="stat-label"><i data-lucide="arrow-down-left"></i>Deze maand binnen</div><div class="stat-value positive">${protectedEuro(income)}</div></div>
-<div class="card"><div class="stat-label"><i data-lucide="arrow-up-right"></i>Deze maand eruit</div><div class="stat-value negative">${protectedEuro(expenses)}</div></div>
-<div class="card"><div class="stat-label"><i data-lucide="${net>=0?"trending-up":"trending-down"}"></i>Deze maand saldo</div><div class="stat-value ${net>=0?"positive":"negative"}">${protectedEuro(net)}</div></div>
+<div class="cards dashboard-top-cards">
+<div class="card dashboard-stat-card"><div class="stat-label"><span class="dashboard-stat-icon"><i data-lucide="wallet"></i></span>Beschikbaar geld</div><div class="stat-value">${protectedEuro(cash)}</div>${tileChange(cash,previousWealthForTiles)}</div>
+<div class="card dashboard-stat-card"><div class="stat-label"><span class="dashboard-stat-icon"><i data-lucide="arrow-down-left"></i></span>Deze maand binnen</div><div class="stat-value positive">${protectedEuro(income)}</div>${tileChange(income,previousIncomeForTiles)}</div>
+<div class="card dashboard-stat-card"><div class="stat-label"><span class="dashboard-stat-icon"><i data-lucide="arrow-up-right"></i></span>Deze maand eruit</div><div class="stat-value negative">${protectedEuro(expenses)}</div>${tileChange(expenses,previousExpenseForTiles)}</div>
+<div class="card dashboard-stat-card"><div class="stat-label"><span class="dashboard-stat-icon"><i data-lucide="${net>=0?"trending-up":"trending-down"}"></i></span>Deze maand saldo</div><div class="stat-value ${net>=0?"positive":"negative"}">${protectedEuro(net)}</div>${tileChange(net,previousNetForTiles)}</div>
 </div>
+
+<div class="card dashboard-wealth-card">
+  <div class="dashboard-wealth-header">
+    <div><div class="section-title">Vermogensontwikkeling</div><div class="small">Totale rekeningstand over de opgeslagen maanden</div></div>
+    <div class="dashboard-wealth-current"><span>Huidig</span><strong>${protectedEuro(currentWealth)}</strong></div>
+  </div>
+  <div class="dashboard-wealth-chart">${wealthSvg}</div>
+  <div class="dashboard-wealth-footer">
+    <div><span class="small">Verandering t.o.v. vorige maand</span><strong class="${wealthChange>=0?"positive":"negative"}">${wealthPoints.length>1?(wealthChange>=0?"+":"-")+euro(Math.abs(wealthChange)):"—"}</strong></div>
+    <div class="dashboard-wealth-period">${wealthPoints.length>1?`${wealthPoints[0].label} – ${wealthPoints[wealthPoints.length-1].label}`:"Nog geen historische ontwikkeling"}</div>
+    ${wealthPoints.length>1?`<span class="dashboard-wealth-badge ${wealthChange>=0?"up":"down"}"><i data-lucide="${wealthChange>=0?"trending-up":"trending-down"}"></i>${wealthChangePct>=0?"+":"-"}${Math.abs(wealthChangePct).toFixed(1)}%</span>`:""}
+  </div>
 </div>
 <div class="section-grid">
 <div class="card"><div class="section-title">Rekeningen</div><div class="small" style="margin-bottom:9px">Stand ${dashboardSnapshotLabel}</div><div class="account-list">
-<div class="account"><div class="account-left"><div class="account-icon"><i data-lucide="landmark"></i></div><div>ABN Amro</div></div><div class="amount">${protectedEuro(dashboardSnapshot.acc1||0)}</div></div>
+<details class="dashboard-abn-details">
+<summary class="account dashboard-abn-summary">
+<div class="account-left"><div class="account-icon"><i data-lucide="landmark"></i></div><div><strong>ABN Amro</strong><div class="small">Klik voor laatste transacties</div></div></div>
+<div class="amount">${protectedEuro(dashboardAbnBalance)}</div>
+</summary>
+<div class="dashboard-abn-details-inner">
+  <div class="small dashboard-subrow-title">Laatste 3 transacties</div>
+  <div class="dashboard-account-transactions dashboard-account-transactions-scroll">
+    ${abnRecentTransactions.length?abnRecentTransactions.map(compactAccountTransaction).join(""):`<div class="small">Nog geen ABN-transacties</div>`}
+  </div>
+</div>
+</details>
 <details class="dashboard-revolut-details">
 <summary class="account dashboard-revolut-summary">
 <div class="account-left"><div class="account-icon"><i data-lucide="wallet"></i></div><div><strong>Revolut</strong><div class="small">Klik om rekeningen te bekijken</div></div></div>
-<div class="amount">${protectedEuro(revolutTotal(dashboardSnapshot))}</div>
+<div class="amount">${protectedEuro(dashboardRevolutBalance)}</div>
 </summary>
 <div class="dashboard-revolut-details-inner">
-  <div class="small dashboard-subrow"><span>Revolut privé</span><strong>${protectedEuro(valForDashboard("private",dashboardSnapshot))}</strong></div>
-  <div class="small dashboard-subrow"><span>DealPlugNL</span><strong>${protectedEuro(Number(dashboardSnapshot.revolutSubaccounts?.dealplug||0))}</strong></div>
-  <div class="small dashboard-subrow"><span>Crypto / Aandelen</span><strong>${protectedEuro(Number(dashboardSnapshot.revolutSubaccounts?.crypto||0))}</strong></div>
+  <div class="dashboard-revolut-subaccount">
+    <div class="small dashboard-subrow"><span>Revolut privé</span><strong>${protectedEuro(displayedBalances.privateRevolut)}</strong></div>
+    <div class="dashboard-account-transactions revolut-subaccount-transactions">
+      ${revolutPrivateRecentTransactions.length?revolutPrivateRecentTransactions.map(compactAccountTransaction).join(""):`<div class="small dashboard-no-transactions">Nog geen transacties</div>`}
+    </div>
+  </div>
+
+  <div class="dashboard-revolut-subaccount">
+    <div class="small dashboard-subrow"><span>DealPlugNL</span><strong>${protectedEuro(displayedBalances.dealplug)}</strong></div>
+    <div class="dashboard-account-transactions revolut-subaccount-transactions">
+      ${dealplugRecentTransactions.length?dealplugRecentTransactions.map(compactAccountTransaction).join(""):`<div class="small dashboard-no-transactions">Nog geen transacties</div>`}
+    </div>
+  </div>
+
+  <div class="dashboard-revolut-subaccount">
+    <div class="small dashboard-subrow"><span>Crypto / Aandelen</span><strong>${protectedEuro(displayedBalances.crypto)}</strong></div>
+    <div class="dashboard-account-transactions revolut-subaccount-transactions">
+      ${cryptoRecentTransactions.length?cryptoRecentTransactions.map(compactAccountTransaction).join(""):`<div class="small dashboard-no-transactions">Nog geen transacties</div>`}
+    </div>
+  </div>
+
 </div>
 </details>
 </div>
 ${(()=>{
-  const currentTotal=Number(dashboardSnapshot.acc1||0)+revolutTotal(dashboardSnapshot);
+  const currentTotal=Number(dashboardSnapshot.acc1||0)+revolutTotal(dashboardSnapshot,dashboardSnapshotKey);
   const previousDate=new Date(currentMonth);
   previousDate.setMonth(previousDate.getMonth()-1);
   const previousKey=monthKey(previousDate);
@@ -1305,7 +1875,7 @@ ${(()=>{
   if(!previousSnapshot){
     return '<div class="account-change flat"><i data-lucide="minus"></i><span>Geen vorige maand beschikbaar</span></div>';
   }
-  const previousTotal=Number(previousSnapshot.acc1||0)+revolutTotal(previousSnapshot);
+  const previousTotal=Number(previousSnapshot.acc1||0)+revolutTotal(previousSnapshot,previousKey);
   const difference=currentTotal-previousTotal;
   if(difference>0){
     return `<div class="account-change up"><i data-lucide="trending-up"></i><span>${protectedEuro(difference)} meer dan vorige maand</span></div>`;
@@ -1327,10 +1897,11 @@ ${(()=>{
 <div class="form-grid">
 <div class="field"><label>Categorie</label><select id="quickOtherCategory"><option value="Tanken">Tanken</option><option value="Abonnement">Abonnement</option><option value="Kleding">Kleding</option><option value="Vervoer">Vervoer</option><option value="Entertainment">Entertainment</option><option value="Vakantie">Vakantie</option><option value="Gezondheid">Gezondheid</option><option value="Overig">Overig</option></select></div>
 <div class="field"><label>Bedrag (€)</label><input id="quickOtherAmount" type="number" min="0.01" step=".01" inputmode="decimal" placeholder="Bijv. 25"></div>
+<div class="field" id="quickOtherDescriptionField" style="display:none"><label>Omschrijving</label><input id="quickOtherDescription" type="text" maxlength="120" placeholder="Bijv. Cadeau, reparatie, lunch"></div>
 </div>
 <div class="form-actions"><button class="btn primary" id="quickOtherAdd"><i data-lucide="plus"></i>Uitgave toevoegen</button></div>
 </div>
-<div class="small" style="margin-top:8px">Wordt alleen als uitgave geregistreerd en verandert je spaarrekening niet.</div>
+<div class="small" style="margin-top:8px">Wordt als uitgave geregistreerd en vermindert je ABN Amro spaarrekening.</div>
 </div>
 </div>
 <div class="card transactions">
@@ -1370,21 +1941,31 @@ ${(()=>{
   </div>
 </div>
 <div class="card dashboard-recurring-summary">
-  <div class="section-title"><span style="display:flex;align-items:center;gap:8px"><i data-lucide="repeat"></i>Terugkerende kosten & loon</span></div>
-  <div class="small">Je vaste maandelijkse uitgaven en je loon.</div>
+  <div class="section-title"><span style="display:flex;align-items:center;gap:8px"><i data-lucide="repeat"></i>Vaste kosten & wekelijks loon</span></div>
+  <div class="small">Je vaste maandelijkse uitgaven en je wekelijkse loon.</div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px">
     <div style="padding:11px;border:1px solid var(--border);border-radius:12px;background:var(--card)">
       <div class="small">Vaste kosten per maand</div>
       <div class="negative" style="font-size:18px;font-weight:500;margin-top:4px">${(()=>{const monthly=data.recurring.filter(r=>r.kind==="expense").reduce((s,r)=>s+Number(r.amount||0),0); return protectedEuro(monthly)})()}</div>
     </div>
     <div style="padding:11px;border:1px solid var(--border);border-radius:12px">
-      <div class="small">Loon</div>
-      <div class="positive" style="font-size:18px;font-weight:500;margin-top:4px">${(()=>{if(!data.weeklySalary?.enabled)return "Niet ingesteld"; const week=Math.min(5,Math.ceil(new Date().getDate()/7)); return protectedEuro(Number(data.weeklySalary.amount||0)*week)})()}</div>
+      <div class="small">Wekelijks loon</div>
+      <div class="positive" style="font-size:18px;font-weight:500;margin-top:4px">${(()=>{if(!data.weeklySalary?.enabled)return "Niet ingesteld"; return protectedEuro(Number(data.weeklySalary.amount||0))})()}</div>
+      <div class="small" style="margin-top:3px">Iedere woensdag</div>
+      <div style="margin-top:9px;padding-top:9px;border-top:1px solid var(--border)">
+        <div class="small">Totaal loon deze maand</div>
+        <div class="positive" style="font-size:15px;font-weight:600;margin-top:3px">${(()=>{
+          const salaryTotal=data.transactions
+            .filter(t=>monthKey(t.date)===monthKey(currentMonth)&&t.kind==="income"&&(t.category==="Salaris"||t.recurringSalary===true))
+            .reduce((s,t)=>s+Number(t.amount||0),0);
+          return protectedEuro(salaryTotal);
+        })()}</div>
+      </div>
     </div>
   </div>
   <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:11px">
     <div class="small" style="margin-bottom:7px">Mijn vaste kosten</div>
-    ${(()=>{const fixed=data.recurring.filter(r=>r.kind==="expense").sort((a,b)=>Number(a.day||0)-Number(b.day||0)); return fixed.length ? fixed.map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)"><div style="min-width:0"><div style="font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.description||"Vaste kosten")}</div><div class="small">${esc(r.category||"Overig")} · dag ${Number(r.day||0)}</div></div><div class="negative" style="font-weight:600;white-space:nowrap">${protectedEuro(r.amount||0)}</div></div>`).join("") : `<div class="empty">Nog geen vaste kosten ingesteld.</div>`})()}
+    ${(()=>{const fixed=data.recurring.filter(r=>r.kind==="expense"); return fixed.length ? fixed.map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px"><div style="min-width:0"><div style="font-size:12px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.description||"Vaste kosten")}</div><div style="font-size:12px;color:var(--muted)">${esc(r.category||"Overig")}</div></div><div class="negative" style="font-size:12px;font-weight:600;white-space:nowrap">${protectedEuro(r.amount||0)}</div></div>`).join("") : `<div class="empty">Nog geen vaste kosten ingesteld.</div>`})()}
   </div>
 </div>
 <div class="finance-insight-grid">
@@ -1455,13 +2036,25 @@ quickExpense(category,amount);
 $("quickOtherToggle").onclick=()=>{
 const panel=$("quickOtherPanel");
 panel.style.display=panel.style.display==="none"?"block":"none";
+if(panel.style.display==="none"){
+  $("quickOtherDescriptionField").style.display="none";
+  $("quickOtherDescription").value="";
+}
+};
+$("quickOtherCategory").onchange=()=>{
+  const isOther=$("quickOtherCategory").value==="Overig";
+  $("quickOtherDescriptionField").style.display=isOther?"block":"none";
+  if(!isOther) $("quickOtherDescription").value="";
 };
 $("quickOtherAdd").onclick=()=>{
 const category=$("quickOtherCategory").value;
 const amount=Number(String($("quickOtherAmount").value).replace(",",".").trim());
 if(!Number.isFinite(amount)||amount<=0){notify("Vul een geldig bedrag in.");return}
-quickExpense(category,amount);
+const description=$("quickOtherDescription").value.trim();
+if(category==="Overig" && !description){notify("Vul een omschrijving in voor Overig.");$("quickOtherDescription").focus();return}
+quickExpense(category,amount,category==="Overig"?description:category);
 $("quickOtherAmount").value="";
+$("quickOtherDescription").value="";
 };
 document.querySelectorAll("[data-quick-income]").forEach(btn=>btn.onclick=()=>{
 const type=btn.dataset.quickIncome;
@@ -1475,9 +2068,29 @@ else addWorkIncome(amount);
 });
 }
 
-function quickExpense(category,amount){
-const tx={id:uid(),description:category,amount,date:today(),category,accountId:null,kind:"expense",quickOnly:true};
-data.transactions.push(tx);saveAndRender();
+function quickExpense(category,amount,description){
+  // Snelle uitgaven worden net als gewone uitgaven van de
+  // ABN Amro spaarrekening afgeboekt.
+  const savingsAccount=accountById("acc2");
+  if(!savingsAccount){notify("ABN Amro spaarrekening niet gevonden.");return}
+  if(Number(savingsAccount.balance||0)<amount){
+    notify(`Onvoldoende saldo op ${savingsAccount.name}. Beschikbaar: ${euro(savingsAccount.balance)}.`);
+    return;
+  }
+
+  savingsAccount.balance-=amount;
+  const tx={
+    id:uid(),
+    description:description||category,
+    amount,
+    date:today(),
+    category,
+    accountId:savingsAccount.id,
+    kind:"expense",
+    quickOnly:true
+  };
+  data.transactions.push(tx);
+  saveAndRender();
 }
 function addWorkIncome(amount){
 const acc=data.accounts[0];
@@ -1496,20 +2109,23 @@ data.dealplug.entries.push({id:uid(),kind,amount,date:today(),description});save
 function transactionRow(t,full){
 const acc=accountById(t.accountId);
 const to=accountById(t.toAccountId);
-const sign=t.kind==="income"?"+":t.kind==="transfer"?"↔":t.kind==="revolutAdjustment"?(t.direction==="add"?"+":"-"):"-";
+const sign=t.kind==="income"?"+":t.kind==="transfer"||t.kind==="revolutTransfer"?"↔":t.kind==="revolutAdjustment"?(t.direction==="add"?"+":"-"):"-";
 const cls=t.kind==="income"||t.kind==="revolutAdjustment"&&t.direction==="add"?"positive":t.kind==="expense"||t.kind==="revolutAdjustment"&&t.direction==="remove"?"negative":"";
-const accountLabel=t.kind==="revolutAdjustment"?({private:"Revolut privé",dealplug:"DealPlugNL",crypto:"Crypto / Aandelen"}[t.target]||"Revolut"):(t.quickOnly?"Uitgavenregistratie":(acc?.name||"-"));
+const accountLabel=t.kind==="revolutAdjustment"?({private:"Revolut privé",dealplug:"DealPlugNL",crypto:"Crypto / Aandelen"}[t.target]||"Revolut"):t.kind==="revolutTransfer"?`${({private:"Revolut privé",dealplug:"DealPlugNL",crypto:"Crypto / Aandelen"}[t.fromTarget]||"Revolut")} → ${({private:"Revolut privé",dealplug:"DealPlugNL",crypto:"Crypto / Aandelen"}[t.toTarget]||"Revolut")}`:(t.quickOnly?"Uitgavenregistratie":(acc?.name||"-"));
 const categoryLabel=t.kind==="revolutAdjustment"?"Revolut mutatie":t.category;
-return `<tr><td>${esc(t.description)}</td><td><span class="badge">${esc(categoryLabel)}</span></td><td>${new Date(t.date).toLocaleDateString("nl-NL")}</td>${full?`<td>${esc(accountLabel)}${t.kind==="transfer"&&to?` → ${esc(to.name)}`:""}</td>`:""}<td class="${cls}">${sign}${euro(t.amount)}</td>${full?`<td><div class="actions"><button data-edit="${t.id}" title="Bewerken"><i data-lucide="pencil"></i></button><button data-delete="${t.id}" class="danger" title="Verwijderen"><i data-lucide="trash-2"></i></button></div></td>`:""}</tr>`;
+const txTime=dashboardTransactionTime(t);
+const txDate=new Date(t.date).toLocaleDateString("nl-NL");
+const txTimeText=Number.isFinite(txTime)&&txTime>0?new Date(txTime).toLocaleTimeString("nl-NL",{hour:"2-digit",minute:"2-digit"}):"";
+return `<tr><td>${esc(t.description)}</td><td><span class="badge">${esc(categoryLabel)}</span></td><td><span class="transaction-date">${txDate}<small>${txTimeText}</small></span></td>${full?`<td>${esc(accountLabel)}${t.kind==="transfer"&&to?` → ${esc(to.name)}`:""}</td>`:""}<td class="${cls}">${sign}${euro(t.amount)}</td>${full?`<td><div class="actions"><button data-edit="${t.id}" title="Bewerken"><i data-lucide="pencil"></i></button><button data-delete="${t.id}" class="danger" title="Verwijderen"><i data-lucide="trash-2"></i></button></div></td>`:""}</tr>`;
 }
 
 function renderTransactions(){
 const ts=[...monthTransactions()].sort((a,b)=>new Date(b.date)-new Date(a.date));
 $("transactions").innerHTML=`
-<div class="topbar"><div><h1>Transacties</h1><div class="subtitle">Inkomsten en uitgaven van ${monthName()}</div></div></div>
+<div class="topbar"><div><h1>Transacties</h1><div class="subtitle">Inkomsten en overboekingen van ${monthName()}</div></div></div>
 <div class="card"><div class="section-title">Nieuwe transactie</div>
 <form id="transactionForm">
-<div class="toggle"><button type="button" data-kind="expense" class="active">Uitgave</button><button type="button" data-kind="income">Inkomst</button><button type="button" data-kind="transfer">Overboeking</button></div>
+<div class="toggle compact-transaction-toggle"><button type="button" data-kind="income" class="active">Inkomst</button><button type="button" data-kind="transfer">Overboeking</button></div>
 <div class="form-grid">
 <div class="field"><label>Omschrijving</label><input id="description" required placeholder="Bijv. Boodschappen"></div>
 <div class="field"><label>Bedrag (€)</label><input id="amount" required type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0,00"></div>
@@ -1521,36 +2137,49 @@ $("transactions").innerHTML=`
 <div class="form-actions"><button class="btn primary" type="submit"><i data-lucide="plus"></i>Transactie toevoegen</button></div>
 
 <div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--border)">
-  <div class="section-title">Geld toevoegen aan Revolut</div>
-  <div class="small" style="margin-bottom:12px">Kies een Revolut-subrekening en voer zelf het bedrag in. Dit wordt toegevoegd aan de rekeningstand van de huidige maand en niet als gewone inkomsten geboekt.</div>
+  <div class="section-title">Geld schuiven binnen Revolut</div>
+  <div class="small" style="margin-bottom:12px">Verplaats geld tussen Revolut privé, DealPlugNL en Crypto / Aandelen. Het totaal van Revolut blijft gelijk.</div>
+  <div class="revolut-balance-grid">
+    <div class="revolut-balance-tile"><div>ABN Amro</div><strong>${protectedEuro(displayedAccountBalances(monthKey(currentMonth)).abn)}</strong></div>
+    <div class="revolut-balance-tile"><div>Revolut privé</div><strong>${protectedEuro(displayedAccountBalances(monthKey(currentMonth)).privateRevolut)}</strong></div>
+    <div class="revolut-balance-tile"><div>DealPlugNL</div><strong>${protectedEuro(displayedAccountBalances(monthKey(currentMonth)).dealplug)}</strong></div>
+    <div class="revolut-balance-tile"><div>Crypto / Aandelen</div><strong>${protectedEuro(displayedAccountBalances(monthKey(currentMonth)).crypto)}</strong></div>
+  </div>
   <div class="form-grid">
     <div class="field">
-      <label>Revolut-rekening</label>
-      <select id="revolutAddTarget">
+      <label>Van rekening</label>
+      <select id="revolutTransferFrom">
         <option value="private">Revolut privé</option>
         <option value="dealplug">DealPlugNL</option>
         <option value="crypto">Crypto / Aandelen</option>
       </select>
     </div>
     <div class="field">
+      <label>Naar rekening</label>
+      <select id="revolutTransferTo">
+        <option value="dealplug">DealPlugNL</option>
+        <option value="private">Revolut privé</option>
+        <option value="crypto">Crypto / Aandelen</option>
+      </select>
+    </div>
+    <div class="field">
       <label>Bedrag (€)</label>
-      <input id="revolutAddAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Bijv. 500">
+      <input id="revolutTransferAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Bijv. 500">
     </div>
     <div class="field">
       <label>Opmerking</label>
-      <input id="revolutAdjustmentNote" type="text" maxlength="120" placeholder="Bijv. Geld naar privérekening">
+      <input id="revolutTransferNote" type="text" maxlength="120" placeholder="Bijv. Geld naar DealPlugNL">
     </div>
   </div>
   <div class="form-actions">
-    <button type="button" class="btn primary" id="addRevolutAmount"><i data-lucide="plus"></i>Bedrag toevoegen</button>
-    <button type="button" class="btn" id="removeRevolutAmount"><i data-lucide="minus"></i>Bedrag afhalen</button>
+    <button type="button" class="btn primary" id="transferRevolutAmount"><i data-lucide="arrow-right-left"></i>Geld overboeken</button>
   </div>
 </div>
 </form></div>
 <div class="card transactions"><div class="section-title">Transacties</div>
 ${ts.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Omschrijving</th><th>Categorie</th><th>Datum</th><th>Rekening</th><th>Bedrag</th><th></th></tr></thead><tbody>${ts.map(t=>transactionRow(t,true)).join("")}</tbody></table></div>`:`<div class="empty">Nog geen transacties.</div>`}</div>`;
 
-let kind="expense";
+let kind="income";
 document.querySelectorAll("#transactionForm [data-kind]").forEach(btn=>btn.onclick=()=>{
 kind=btn.dataset.kind;
 document.querySelectorAll("#transactionForm [data-kind]").forEach(x=>x.classList.toggle("active",x===btn));
@@ -1570,14 +2199,63 @@ if(!date){notify("Kies een datum.");return}
 if(kind==="transfer"){
 const from=accountById(accountId),to=accountById($("transferTo").value);
 if(!from||!to||from.id===to.id){notify("Kies twee verschillende rekeningen.");return}
-if(from.balance<amount){notify("Onvoldoende saldo op de bronrekening.");return}
-from.balance-=amount;to.balance+=amount;
+
+// Gebruik voor de saldo-check dezelfde maandstanden als het dashboard.
+// ABN Amro wordt in de maandstanden als acc1 opgeslagen, terwijl de
+// transactiekeuze acc2 gebruikt. Revolut privé gebruikt acc4.
+const month=monthKey(new Date(date));
+const snap=data.accountSnapshots?.[month];
+const transferEffect=(ids)=>data.transactions.filter(t=>monthKey(t.date)===month).reduce((sum,t)=>{
+  const n=Number(t.amount||0);
+  if(t.kind==="income" && ids.includes(t.accountId)) return sum+n;
+  if(t.kind==="expense" && ids.includes(t.accountId)) return sum-n;
+  if(t.kind==="transfer"){
+    if(ids.includes(t.accountId)) sum-=n;
+    if(ids.includes(t.toAccountId)) sum+=n;
+  }
+  return sum;
+},0);
+// Gebruik exact hetzelfde actuele saldo als de rekeningtegels op het
+// dashboard/transacties. Daardoor worden eerdere overboekingen meteen
+// meegenomen in de volgende saldo-check.
+const balancesBeforeTransfer=displayedAccountBalances(month);
+const sourceBalance=from.id==="acc2"
+  ? Number(balancesBeforeTransfer.abn||0)
+  : from.id==="acc4"
+    ? Number(balancesBeforeTransfer.privateRevolut||0)
+    : Number(from.balance||0);
+if(sourceBalance+0.000001<amount){
+  notify(`Overboeking geweigerd: onvoldoende saldo op ${from.name}. Beschikbaar: ${euro(sourceBalance)}.`);
+  return;
+}
+
+from.balance-=amount;
+to.balance+=amount;
+
+// Een overboeking verandert NOOIT de opgeslagen maandstand.
+// De maandstand is een vast historisch meetpunt; de actuele rekeningstanden
+// worden hierboven bijgewerkt en de overboeking blijft als transactie geregistreerd.
 data.transactions.push({id:uid(),description,amount,date,category:"Overboeking",accountId:from.id,toAccountId:to.id,kind:"transfer"});
 }else{
 const acc=accountById(accountId);
 if(!acc){notify("Kies een rekening.");return}
-// Gewone transacties zijn alleen registraties voor het dashboard en
-// veranderen niet de handmatig ingevoerde rekeningstand.
+
+// Een gewone inkomsten-/kostentransactie verandert ook het actuele saldo
+// van de gekozen rekening. De opgeslagen maandstand blijft een historisch
+// snapshot; alleen de actuele maandrekening wordt live bijgewerkt.
+const transactionMonth=monthKey(new Date(date));
+if(transactionMonth===monthKey(new Date())){
+  if(kind==="expense") {
+    if(Number(acc.balance||0)+0.000001<amount){
+      notify(`Transactie geweigerd: onvoldoende saldo op ${acc.name}. Beschikbaar: ${euro(acc.balance||0)}.`);
+      return;
+    }
+    acc.balance-=amount;
+  } else if(kind==="income") {
+    acc.balance+=amount;
+  }
+}
+
 data.transactions.push({id:uid(),description,amount,date,category:$("category").value,accountId,kind});
 }
 saveAndRender();
@@ -1615,11 +2293,50 @@ function changeRevolutSubaccountAmount(target, amount, direction, note){
   notify(`${euro(n)} ${direction==="remove"?"afgehaald van":"toegevoegd aan"} ${label}.`);
 }
 
-$("addRevolutAmount").onclick=()=>{
-  changeRevolutSubaccountAmount($("revolutAddTarget").value,$("revolutAddAmount").value,"add",$("revolutAdjustmentNote").value);
-};
-$("removeRevolutAmount").onclick=()=>{
-  changeRevolutSubaccountAmount($("revolutAddTarget").value,$("revolutAddAmount").value,"remove",$("revolutAdjustmentNote").value);
+$("transferRevolutAmount").onclick=()=>{
+  const from=$("revolutTransferFrom").value;
+  const to=$("revolutTransferTo").value;
+  const n=Number($("revolutTransferAmount").value);
+  const note=$("revolutTransferNote").value.trim();
+  if(from===to){notify("Kies twee verschillende Revolut-rekeningen.");return}
+  if(!Number.isFinite(n)||n<=0){notify("Vul een geldig bedrag in.");return}
+
+  const month=monthKey(currentMonth);
+  const label=x=>x==="private"?"Revolut privé":x==="dealplug"?"DealPlugNL":"Crypto / Aandelen";
+
+  // Gebruik uitsluitend het actuele saldo. De historische maandstand mag door
+  // een overboeking nooit worden aangepast.
+  const displayed=displayedAccountBalances(month);
+  const getCurrent=x=>x==="private"
+    ? Number(displayed.privateRevolut||0)
+    : x==="dealplug"
+      ? Number(displayed.dealplug||0)
+      : Number(displayed.crypto||0);
+  const fromBalance=getCurrent(from);
+  if(fromBalance+0.000001<n){notify(`Overboeking geweigerd: onvoldoende saldo op ${label(from)}. Beschikbaar: ${euro(fromBalance)}.`);return}
+
+  // Werk het actuele privé-saldo direct bij. DealPlug/Crypto worden via
+  // de transactiehistorie berekend; de historische maandstand blijft intact.
+  const privateAccount=accountById("acc4");
+  if(from==="private" && privateAccount) privateAccount.balance-=n;
+  if(to==="private" && privateAccount) privateAccount.balance+=n;
+
+  data.transactions.push({
+    id:uid(),
+    description:note||`Overboeking ${label(from)} → ${label(to)}`,
+    amount:n,
+    date:today(),
+    category:"Overboeking Revolut",
+    accountId:"revolut-subaccount",
+    kind:"revolutTransfer",
+    fromTarget:from,
+    toTarget:to,
+    month
+  });
+
+  persist();
+  render();
+  notify(`${euro(n)} overgeboekt van ${label(from)} naar ${label(to)}.`);
 };
 document.querySelectorAll("[data-revolut-quick]").forEach(b=>b.onclick=()=>{
   changeRevolutSubaccountAmount(b.dataset.revolutQuick,500,"add","");
@@ -1634,36 +2351,27 @@ const t=data.transactions.find(x=>x.id===tid);if(!t)return;
 const val=prompt("Nieuw bedrag (€):",String(t.amount));
 if(val===null)return;
 const n=Number(val);if(!Number.isFinite(n)||n<=0){notify("Ongeldig bedrag.");return}
-if(t.kind==="revolutAdjustment"){
-  const snap=data.accountSnapshots?.[t.month];
-  if(!snap){notify("Rekeningstand niet gevonden.");return}
-  snap.revolutSubaccounts=snap.revolutSubaccounts||{};
-  const current=t.target==="private"?Number(snap.acc4||0):Number(snap.revolutSubaccounts[t.target]||0);
-  const oldEffect=t.direction==="add"?t.amount:-t.amount;
-  const newEffect=t.direction==="add"?n:-n;
-  const next=current-oldEffect+newEffect;
-  if(next<0){notify("Onvoldoende saldo voor deze wijziging.");return}
-  if(t.target==="private")snap.acc4=next;else snap.revolutSubaccounts[t.target]=next;
+if(t.kind==="revolutTransfer"){
+  const privateAccount=accountById("acc4");
+  // Eerst de oude beweging terugdraaien op het actuele saldo.
+  if(privateAccount){
+    if(t.fromTarget==="private") privateAccount.balance+=Number(t.amount||0);
+    if(t.toTarget==="private") privateAccount.balance-=Number(t.amount||0);
+  }
+  // Controleer daarna het nieuwe bedrag vanuit de herstelde actuele bron.
+  const displayed=displayedAccountBalances(t.month);
+  const sourceBefore=t.fromTarget==="private"
+    ? Number(privateAccount?.balance||0)
+    : t.fromTarget==="dealplug" ? Number(displayed.dealplug||0) : Number(displayed.crypto||0);
+  if(sourceBefore<n){notify("Onvoldoende saldo voor dit nieuwe bedrag.");return}
+  if(privateAccount){
+    if(t.fromTarget==="private") privateAccount.balance-=n;
+    if(t.toTarget==="private") privateAccount.balance+=n;
+  }
   t.amount=n;
   persist();render();
   return;
 }
-if(t.kind==="transfer"){
-const from=accountById(t.accountId),to=accountById(t.toAccountId);
-if(!from||!to)return;
-from.balance+=t.amount;to.balance-=t.amount;
-if(from.balance<n){from.balance-=t.amount;to.balance+=t.amount;notify("Onvoldoende saldo voor deze wijziging.");return}
-from.balance-=n;to.balance+=n;
-}else{
-// Het wijzigen van een gewone transactie verandert alleen de transactie zelf,
-// niet de handmatig ingevoerde rekeningstand.
-t.amount=n;
-}
-t.amount=n;saveAndRender();
-}
-function deleteTransaction(tid){
-const t=data.transactions.find(x=>x.id===tid);if(!t)return;
-if(!confirm("Deze transactie verwijderen?"))return;
 if(t.kind==="revolutAdjustment"){
   const snap=data.accountSnapshots?.[t.month];
   if(snap){
@@ -1672,18 +2380,85 @@ if(t.kind==="revolutAdjustment"){
     const next=t.direction==="add"?current-t.amount:current+t.amount;
     if(t.target==="private")snap.acc4=Math.max(0,next);else snap.revolutSubaccounts[t.target]=Math.max(0,next);
   }
-}else if(t.kind==="transfer"){const from=accountById(t.accountId),to=accountById(t.toAccountId);if(from)from.balance+=t.amount;if(to)to.balance-=t.amount}
+}else if(t.kind==="transfer"){const from=accountById(t.accountId),to=accountById(t.toAccountId);if(from)from.balance+=t.amount;if(to)to.balance-=t.amount
+}else if(t.kind==="income"||t.kind==="expense"){
+  const acc=accountById(t.accountId);
+  if(acc && monthKey(new Date(t.date))===monthKey(new Date())){
+    if(t.kind==="income") acc.balance-=Number(t.amount||0);
+    else acc.balance+=Number(t.amount||0);
+  }
+}
+data.transactions=data.transactions.filter(x=>x.id!==tid);saveAndRender();
+}
+
+function deleteTransaction(tid){
+const t=data.transactions.find(x=>x.id===tid);if(!t)return;
+if(!confirm("Deze transactie verwijderen?"))return;
+if(t.kind==="revolutTransfer"){
+  const privateAccount=accountById("acc4");
+  if(privateAccount){
+    if(t.fromTarget==="private") privateAccount.balance+=Number(t.amount||0);
+    if(t.toTarget==="private") privateAccount.balance-=Number(t.amount||0);
+  }
+}else if(t.kind==="revolutAdjustment"){
+  const snap=data.accountSnapshots?.[t.month];
+  if(snap){
+    snap.revolutSubaccounts=snap.revolutSubaccounts||{};
+    const current=t.target==="private"?Number(snap.acc4||0):Number(snap.revolutSubaccounts[t.target]||0);
+    const next=t.direction==="add"?current-t.amount:current+t.amount;
+    if(t.target==="private")snap.acc4=Math.max(0,next);else snap.revolutSubaccounts[t.target]=Math.max(0,next);
+  }
+}else if(t.kind==="transfer"){
+  const from=accountById(t.accountId),to=accountById(t.toAccountId);
+  if(from)from.balance+=t.amount;
+  if(to)to.balance-=t.amount;
+}else if(t.kind==="income"||t.kind==="expense"){
+  const acc=accountById(t.accountId);
+  if(acc && monthKey(new Date(t.date))===monthKey(new Date())){
+    if(t.kind==="income") acc.balance-=Number(t.amount||0);
+    else acc.balance+=Number(t.amount||0);
+  }
+}
 data.transactions=data.transactions.filter(x=>x.id!==tid);saveAndRender();
 }
 
 let selectedSnapshotMonth="";
 
-function revolutSubTotal(snapshot){
-  const subs=snapshot?.revolutSubaccounts||{};
-  return Number(subs.dealplug||0)+Number(subs.crypto||0);
+function dealplugNetForMonth(month){
+  const entries=Array.isArray(data.dealplug?.entries)?data.dealplug.entries:[];
+  return entries.filter(e=>monthKey(e.date)===month).reduce((sum,e)=>{
+    const amount=Number(e.amount||0);
+    if(e.kind==="income") return sum+amount;
+    if(e.kind==="expense"||e.kind==="cost"||e.kind==="kosten") return sum-amount;
+    return sum;
+  },0);
 }
-function revolutTotal(snapshot){
-  return Number(snapshot?.acc4||0)+revolutSubTotal(snapshot);
+function dealplugBalanceForMonth(month,snapshot){
+  return Number(snapshot?.revolutSubaccounts?.dealplug||0)+dealplugNetForMonth(month);
+}
+function revolutPrivateCurrentBalance(month){
+  return Number(displayedAccountBalances(month).privateRevolut||0);
+}
+
+function revolutPrivateBalance(snapshot){
+  // Gebruik de maandstand als die expliciet is opgeslagen. Als die nog niet
+  // bestaat, gebruik dan het actuele Revolut-saldo uit de rekeninggegevens.
+  if(snapshot && Object.prototype.hasOwnProperty.call(snapshot,"acc4")){
+    return Number(snapshot.acc4||0);
+  }
+  const acc=accountById("acc4");
+  return Number(acc?.balance||0);
+}
+function revolutSubTotal(snapshot,month){
+  const subs=snapshot?.revolutSubaccounts||{};
+  const dealplug=month?dealplugBalanceForMonth(month,snapshot):Number(subs.dealplug||0);
+  const crypto=Number(subs.crypto||0);
+  // Crypto / Aandelen blijft een aparte subrekening, maar telt wel mee in
+  // het totale Revolut-saldo.
+  return dealplug+crypto;
+}
+function revolutTotal(snapshot,month){
+  return revolutPrivateBalance(snapshot)+revolutSubTotal(snapshot,month);
 }
 
 function renderAccounts(){
@@ -1708,8 +2483,8 @@ const selectedIndex=months.findIndex(d=>key(d)===selectedSnapshotMonth);
 const selectedDate=months[selectedIndex];
 const selectedKey=key(selectedDate);
 const prev=selectedIndex>0?months[selectedIndex-1]:null;
-const total=val(selectedKey,"acc1")+revolutTotal(data.accountSnapshots?.[selectedKey]);
-const prevTotal=prev?(val(key(prev),"acc1")+revolutTotal(data.accountSnapshots?.[key(prev)])):0;
+const total=val(selectedKey,"acc1")+revolutTotal(data.accountSnapshots?.[selectedKey],selectedKey);
+const prevTotal=prev?(val(key(prev),"acc1")+revolutTotal(data.accountSnapshots?.[key(prev)],key(prev))):0;
 const cryptoTarget=Number(data.cryptoMonthlyTarget||500);
 const cryptoBalance=subVal(selectedKey,"crypto");
 const cryptoProgress=cryptoTarget>0?Math.min(100,(cryptoBalance/cryptoTarget)*100):0;
@@ -1731,23 +2506,22 @@ ${months.map(d=>`<option value="${key(d)}" ${key(d)===selectedKey?"selected":""}
 
 ${accounts.map(a=>`<div class="snapshot-row"><span>${a[1]}</span><div class="snapshot-input-wrap"><span>€</span><input type="number" min="0" step="0.01" inputmode="decimal" data-snapshot-month="${selectedKey}" data-snapshot-account="${a[0]}" value="${val(selectedKey,a[0])||""}" placeholder="0,00"></div></div>`).join("")}
 
-<div class="revolut-main-row" data-revolut-toggle style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;cursor:pointer;border-top:1px solid var(--border);margin-top:6px">
+<div class="revolut-main-row" style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--border);margin-top:5px">
   <div style="display:flex;align-items:center;gap:8px">
-    <i data-lucide="chevron-right" id="revolutChevron" style="width:16px;height:16px"></i>
     <strong>Revolut</strong>
-    <span class="small">meerdere rekeningen</span>
+    <span class="small">Totaal</span>
   </div>
-  <strong>${euro(revolutTotal(data.accountSnapshots?.[selectedKey]))}</strong>
+  <strong>${euro(revolutTotal(data.accountSnapshots?.[selectedKey],selectedKey))}</strong>
 </div>
 
-<div id="revolutSubaccounts" style="display:none;padding:2px 0 4px 24px">
+<div id="revolutSubaccounts" style="display:block;padding:1px 0 3px 18px">
   <div class="snapshot-row">
     <span>Revolut privé</span>
     <div class="snapshot-input-wrap"><span>€</span><input type="number" min="0" step="0.01" inputmode="decimal" data-snapshot-month="${selectedKey}" data-snapshot-subaccount="private" value="${val(selectedKey,"acc4")||""}" placeholder="0,00"></div>
   </div>
   <div class="snapshot-row">
     <span>DealPlugNL</span>
-    <div class="snapshot-input-wrap"><span>€</span><input type="number" min="0" step="0.01" inputmode="decimal" data-snapshot-month="${selectedKey}" data-snapshot-subaccount="dealplug" value="${subVal(selectedKey,"dealplug")||""}" placeholder="0,00"></div>
+    <div class="snapshot-input-wrap"><span>€</span><input type="number" min="0" step="0.01" inputmode="decimal" data-snapshot-month="${selectedKey}" data-snapshot-subaccount="dealplug" value="${dealplugBalanceForMonth(selectedKey,data.accountSnapshots?.[selectedKey])||""}" placeholder="0,00"></div>
   </div>
   <div class="snapshot-row">
     <div>
@@ -1773,20 +2547,6 @@ $("snapshotMonthSelect").onchange=()=>{
   renderAccounts();
 };
 
-const revolutToggle=document.querySelector("[data-revolut-toggle]");
-const revolutSubaccounts=document.getElementById("revolutSubaccounts");
-const revolutChevron=document.getElementById("revolutChevron");
-if(revolutToggle && revolutSubaccounts){
-  revolutToggle.onclick=()=>{
-    const open=revolutSubaccounts.style.display!=="none";
-    revolutSubaccounts.style.display=open?"none":"block";
-    if(revolutChevron){
-      revolutChevron.setAttribute("data-lucide",open?"chevron-right":"chevron-down");
-      lucide.createIcons();
-    }
-  };
-}
-
 $("saveSnapshotBtn").onclick=()=>{
   const monthToSave=selectedSnapshotMonth;
   if(!monthToSave){notify("Kies eerst een maand.");return;}
@@ -1798,7 +2558,16 @@ $("saveSnapshotBtn").onclick=()=>{
   document.querySelectorAll("[data-snapshot-account]").forEach(input=>{
     const raw=String(input.value||"").replace(",", ".").trim();
     const value=raw===""?0:Number(raw);
-    snap[input.dataset.snapshotAccount]=Number.isFinite(value)?value:0;
+    const cleanValue=Number.isFinite(value)?value:0;
+    snap[input.dataset.snapshotAccount]=cleanValue;
+
+    // Bij het opslaan van de stand van de huidige maand moet die ingevoerde stand
+    // ook de actuele account-state worden. Dashboard en Transacties lezen daarna
+    // exact dezelfde bron voor het huidige saldo.
+    if(monthToSave===monthKey(new Date()) && input.dataset.snapshotAccount==="acc1") {
+      const abnAccount=accountById("acc2");
+      if(abnAccount) abnAccount.balance=cleanValue;
+    }
   });
 
   snap.revolutSubaccounts=snap.revolutSubaccounts||{};
@@ -1806,7 +2575,20 @@ $("saveSnapshotBtn").onclick=()=>{
     const raw=String(input.value||"").replace(",", ".").trim();
     const value=raw===""?0:Number(raw);
     const id=input.dataset.snapshotSubaccount;
-    snap.revolutSubaccounts[id]=Number.isFinite(value)?value:0;
+    if(id==="private") {
+      // Revolut privé is de actuele hoofdrekening. Bij de huidige maand
+      // synchroniseren we de ingevoerde stand ook naar acc4.
+      const cleanValue=Number.isFinite(value)?value:0;
+      snap.acc4=cleanValue;
+      if(monthToSave===monthKey(new Date())) {
+        const revolutAccount=accountById("acc4");
+        if(revolutAccount) revolutAccount.balance=cleanValue;
+      }
+    } else if(id==="dealplug") {
+      snap.revolutSubaccounts[id]=Number.isFinite(value)?value-dealplugNetForMonth(monthToSave):0;
+    } else {
+      snap.revolutSubaccounts[id]=Number.isFinite(value)?value:0;
+    }
   });
 
   const parts=monthToSave.split("-").map(Number);
@@ -2100,25 +2882,99 @@ document.querySelectorAll("[data-budget-delete]").forEach(b=>b.onclick=()=>{if(c
 
 function renderDealPlug(){
 const entries=[...data.dealplug.entries].sort((a,b)=>new Date(b.date)-new Date(a.date));
-const income=entries.filter(e=>e.kind==="income").reduce((s,e)=>s+Number(e.amount||0),0);
-const costs=entries.filter(e=>e.kind==="expense"||e.kind==="cost"||e.kind==="kosten").reduce((s,e)=>s+Number(e.amount||0),0);
-const balance=Number(data.dealplug.opening)+income-costs;
+const income=entries.reduce((s,e)=>e.kind==="income"?s+Number(e.amount||0):s,0);
+const costs=entries.reduce((s,e)=>{
+  if(e.dealplugSale) return s+Number(e.cost||0);
+  if(e.kind==="expense"||e.kind==="cost"||e.kind==="kosten") return s+Number(e.amount||0);
+  return s;
+},0);
+const cashCosts=entries.reduce((s,e)=>{
+  if(e.dealplugSale) return s;
+  if(e.kind==="expense"||e.kind==="cost"||e.kind==="kosten") return s+Number(e.amount||0);
+  return s;
+},0);
+const balance=Number(data.dealplug.opening)+income-cashCosts;
 $("dealplug").innerHTML=`
-<div class="topbar"><div><h1>DealPlugNL</h1><div class="subtitle">Inkomsten en kosten van je abonnementen</div></div></div>
+<div class="topbar"><div><h1>DealPlugNL</h1><div class="subtitle">Inkomsten en kosten van je abonnementen — automatisch gekoppeld aan Revolut · DealPlugNL</div></div></div>
 <div class="cards"><div class="card"><div class="stat-label"><i data-lucide="wallet"></i>Beginstand</div><div class="stat-value">${protectedEuro(data.dealplug.opening)}</div></div>
 <div class="card"><div class="stat-label"><i data-lucide="arrow-down-left"></i>Inkomsten</div><div class="stat-value positive">${protectedEuro(income)}</div></div>
 <div class="card"><div class="stat-label"><i data-lucide="arrow-up-right"></i>Kosten</div><div class="stat-value negative">${protectedEuro(costs)}</div></div>
 <div class="card"><div class="stat-label"><i data-lucide="calculator"></i>Huidige stand</div><div class="stat-value ${balance>=0?"positive":"negative"}">${protectedEuro(balance)}</div></div></div>
+<div class="notice"><strong>Verkoop:</strong> de verkoopprijs komt bij DealPlugNL binnen. De inkoopkosten worden automatisch als uitgave van de gekozen privé-/bankrekening verwerkt. Zo zie je omzet, kosten en nettowinst apart.</div>
 <div class="card"><div class="section-title">Beginstand instellen</div><div class="form-grid"><div class="field"><label>Beginstand (€)</label><input id="dpOpening" type="number" step=".01" inputmode="decimal" value="${Number(data.dealplug.opening).toFixed(2)}"></div></div><div class="form-actions"><button class="btn primary" id="saveDpOpening"><i data-lucide="save"></i>Beginstand opslaan</button></div></div>
-<div class="card"><div class="section-title">Inkomsten / kosten toevoegen</div><form id="dpForm"><div class="toggle"><button type="button" data-dpkind="income" class="active">Inkomst</button><button type="button" data-dpkind="expense">Kosten</button></div>
-<div class="form-grid"><div class="field"><label>Omschrijving</label><input id="dpDesc" required placeholder="Bijv. Spotify Premium"></div><div class="field"><label>Bedrag (€)</label><input id="dpAmount" required type="number" min="0.01" step=".01" inputmode="decimal"></div><div class="field"><label>Datum</label><input id="dpDate" type="date" value="${today()}" required></div></div><div class="form-actions"><button class="btn primary"><i data-lucide="plus"></i>Toevoegen</button></div></form></div>
+<div class="card"><div class="section-title">DealPlugNL-verkoop of losse kosten</div><form id="dpForm"><div class="toggle dp-mode-toggle"><button type="button" data-dpkind="sale" class="active">Verkoop</button><button type="button" data-dpkind="income">Inkomst</button><button type="button" data-dpkind="expense">Kosten</button></div>
+<div id="dpSaleFields"><div class="form-grid"><div class="field"><label>Omschrijving</label><input id="dpSaleDesc" required placeholder="Bijv. Spotify Premium 12 maanden"></div><div class="field"><label>Verkoopprijs (€)</label><input id="dpSaleAmount" required type="number" min="0.01" step=".01" inputmode="decimal" placeholder="80"></div><div class="field"><label>Inkoopkosten (€)</label><input id="dpSaleCost" type="number" min="0" step=".01" inputmode="decimal" value="0" placeholder="10"></div><div class="field"><label>Kosten betaald vanaf</label><select id="dpCostAccount"><option value="acc2">ABN Amro</option></select></div><div class="field"><label>Datum</label><input id="dpSaleDate" type="date" value="${today()}" required></div></div><div class="small" style="margin-top:10px">Voorbeeld: verkoop €80 + inkoop €10 → €80 komt binnen op DealPlugNL, €10 gaat van ABN Amro af en je nettowinst is €70.</div></div>
+<div id="dpSimpleFields" style="display:none"><div class="form-grid"><div class="field"><label>Omschrijving</label><input id="dpDesc" placeholder="Bijv. Spotify Premium"></div><div class="field"><label>Bedrag (€)</label><input id="dpAmount" type="number" min="0.01" step=".01" inputmode="decimal"></div><div class="field"><label>Datum</label><input id="dpDate" type="date" value="${today()}"></div></div></div>
+<div class="form-actions"><button class="btn primary"><i data-lucide="plus"></i><span id="dpSubmitLabel">Verkoop toevoegen</span></button></div></form></div>
 <div class="card transactions"><div class="section-title">Verkopen en kosten</div>
-${entries.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Omschrijving</th><th>Datum</th><th>Type</th><th>Bedrag</th><th></th></tr></thead><tbody>${entries.map(e=>`<tr><td>${esc(e.description)}</td><td>${new Date(e.date).toLocaleDateString("nl-NL")}</td><td>${e.kind==="income"?"Inkomst":"Kosten"}</td><td class="${e.kind==="income"?"positive":"negative"}">${e.kind==="income"?"+":"-"}${euro(e.amount)}</td><td><button class="icon-btn danger" data-dp-delete="${e.id}"><i data-lucide="trash-2"></i></button></td></tr>`).join("")}</tbody></table></div>`:`<div class="empty">Nog geen DealPlugNL-verkopen of kosten.</div>`}</div>`;
+${entries.length?`<div class="table-wrap"><table class="table"><thead><tr><th>Omschrijving</th><th>Datum</th><th>Type</th><th>Bedrag</th><th></th></tr></thead><tbody>${entries.map(e=>{
+const isSale=!!e.dealplugSale;
+const typeLabel=isSale?"Verkoop":(e.kind==="income"?"Inkomst":"Kosten");
+const amountLabel=isSale?euro(e.amount):euro(e.amount);
+return `<tr><td>${esc(e.description)}</td><td>${new Date(e.date).toLocaleDateString("nl-NL")}</td><td>${typeLabel}</td><td class="${e.kind==="income"?"positive":"negative"}">${e.kind==="income"?"+":"-"}${amountLabel}${isSale&&Number(e.cost||0)>0?` <span class="small">(kosten ${euro(e.cost)})</span>`:""}</td><td><button class="icon-btn danger" data-dp-delete="${e.id}"><i data-lucide="trash-2"></i></button></td></tr>`;
+}).join("")}</tbody></table></div>`:`<div class="empty">Nog geen DealPlugNL-verkopen of kosten.</div>`}</div>`;
 $("saveDpOpening").onclick=()=>{const n=Number($("dpOpening").value);if(!Number.isFinite(n)){notify("Ongeldige beginstand.");return}data.dealplug.opening=n;saveAndRender()};
-let kind="income";
-document.querySelectorAll("[data-dpkind]").forEach(b=>b.onclick=()=>{kind=b.dataset.dpkind;document.querySelectorAll("[data-dpkind]").forEach(x=>x.classList.toggle("active",x===b))});
-$("dpForm").onsubmit=e=>{e.preventDefault();const amount=Number($("dpAmount").value);if(!Number.isFinite(amount)||amount<=0){notify("Vul een geldig bedrag in.");return}data.dealplug.entries.push({id:uid(),kind,amount,date:$("dpDate").value,description:$("dpDesc").value.trim()});saveAndRender()};
-document.querySelectorAll("[data-dp-delete]").forEach(b=>b.onclick=()=>{if(confirm("Deze DealPlugNL-post verwijderen?")){data.dealplug.entries=data.dealplug.entries.filter(e=>e.id!==b.dataset.dpDelete);saveAndRender()}});
+let kind="sale";
+const setDpMode=(mode)=>{
+  kind=mode;
+  document.querySelectorAll("#dpForm [data-dpkind]").forEach(x=>x.classList.toggle("active",x.dataset.dpkind===mode));
+  const sale=mode==="sale";
+  $("dpSaleFields").style.display=sale?"block":"none";
+  $("dpSimpleFields").style.display=sale?"none":"block";
+  $("dpSaleDesc").required=sale;
+  $("dpSaleAmount").required=sale;
+  $("dpDesc").required=!sale;
+  $("dpAmount").required=!sale;
+  $("dpSubmitLabel").textContent=sale?"Verkoop toevoegen":mode==="income"?"Inkomst toevoegen":"Kosten toevoegen";
+};
+document.querySelectorAll("#dpForm [data-dpkind]").forEach(b=>b.onclick=()=>setDpMode(b.dataset.dpkind));
+$("dpForm").onsubmit=e=>{
+  e.preventDefault();
+  if(kind==="sale"){
+    const amount=Number($("dpSaleAmount").value);
+    const cost=Math.max(0,Number($("dpSaleCost").value||0));
+    const description=$("dpSaleDesc").value.trim();
+    const date=$("dpSaleDate").value;
+    const costAccountId=$("dpCostAccount").value;
+    const costAccount=accountById(costAccountId);
+    if(!description){notify("Vul een omschrijving in.");return}
+    if(!Number.isFinite(amount)||amount<=0){notify("Vul een geldige verkoopprijs in.");return}
+    if(!Number.isFinite(cost)||cost<0){notify("Vul geldige inkoopkosten in.");return}
+    if(!date){notify("Kies een datum.");return}
+    if(cost>0&&!costAccount){notify("Kostenrekening niet gevonden.");return}
+    const saleId=uid();
+    const costTxId=uid();
+    data.dealplug.entries.push({id:saleId,kind:"income",amount,date,description,dealplugSale:true,cost,linkedCostTransactionId:costTxId});
+    if(cost>0){
+      costAccount.balance-=cost;
+      data.transactions.push({id:costTxId,description:`Inkoopkosten — ${description}`,amount:cost,date,category:"DealPlugNL kosten",accountId:costAccountId,kind:"expense",dealplugLinked:true,dealplugSaleId:saleId});
+    }
+    saveAndRender();
+    notify(`${euro(amount)} verkoop toegevoegd. ${euro(cost)} kosten via ${costAccount?.name||"rekening"}. Nettowinst: ${euro(amount-cost)}.`);
+    return;
+  }
+  const amount=Number($("dpAmount").value);
+  const description=$("dpDesc").value.trim();
+  const date=$("dpDate").value;
+  if(!description){notify("Vul een omschrijving in.");return}
+  if(!Number.isFinite(amount)||amount<=0){notify("Vul een geldig bedrag in.");return}
+  if(!date){notify("Kies een datum.");return}
+  data.dealplug.entries.push({id:uid(),kind,amount,date,description});
+  saveAndRender();
+};
+document.querySelectorAll("[data-dp-delete]").forEach(b=>b.onclick=()=>{
+  if(!confirm("Deze DealPlugNL-post verwijderen?")) return;
+  const entry=data.dealplug.entries.find(e=>e.id===b.dataset.dpDelete);
+  if(entry?.dealplugSale){
+    const linkedId=entry.linkedCostTransactionId;
+    const tx=data.transactions.find(t=>t.id===linkedId);
+    if(tx?.accountId){const acc=accountById(tx.accountId);if(acc) acc.balance+=Number(tx.amount||0);}
+    data.transactions=data.transactions.filter(t=>t.id!==linkedId);
+  }
+  data.dealplug.entries=data.dealplug.entries.filter(e=>e.id!==b.dataset.dpDelete);
+  saveAndRender();
+});
+setDpMode("sale");
 }
 
 function renderGoals(){
@@ -2138,9 +2994,15 @@ $("recurring").innerHTML=`<div class="topbar"><div><h1>Terugkerend</h1><div clas
 <div class="form-actions"><label class="toggle" style="display:flex;align-items:center;gap:10px"><input id="weeklySalaryEnabled" type="checkbox" ${data.weeklySalary?.enabled?"checked":""}> Inschakelen</label><button type="button" class="btn primary" id="saveWeeklySalary">Wekelijks loon opslaan</button></div></div>
 <div class="notice"><i data-lucide="info"></i> Op de gekozen dag wordt de transactie automatisch één keer per maand toegevoegd. Een uitgave wordt alleen verwerkt als er voldoende saldo is.</div>
 <div class="card"><div class="section-title">Terugkerende transactie toevoegen</div><form id="recForm"><div class="toggle"><button type="button" data-reckind="expense" class="active">Uitgave</button><button type="button" data-reckind="income">Inkomst</button></div>
-<div class="form-grid"><div class="field"><label>Omschrijving</label><input id="recDesc" required placeholder="Bijv. Huur"></div><div class="field"><label>Bedrag (€)</label><input id="recAmount" type="number" min="0.01" step=".01" required inputmode="decimal"></div><div class="field"><label>Categorie</label><select id="recCat">${categories.map(c=>`<option>${c}</option>`).join("")}</select></div><div class="field"><label>Rekening</label><select id="recAcc">${data.accounts.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join("")}</select></div><div class="field"><label>Dag van de maand</label><input id="recDay" type="number" min="1" max="28" value="1" required></div></div>
+<div class="form-grid"><div class="field"><label>Omschrijving</label><input id="recDesc" required placeholder="Bijv. Huur"></div><div class="field"><label>Bedrag (€)</label><input id="recAmount" type="number" min="0.01" step=".01" required inputmode="decimal"></div><div class="field"><label>Categorie</label><select id="recCat">${categories.map(c=>`<option>${c}</option>`).join("")}</select></div><div class="field"><label>Rekening</label><select id="recAcc">${data.accounts.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join("")}</select></div><div class="field"><label>Dag van de maand</label><input id="recDay" type="number" min="1" max="31" step="1" value="1" required inputmode="numeric"><div class="small">Bijv. 1 voor huur, 5 voor verzekering.</div></div></div>
 <div class="form-actions"><button class="btn primary"><i data-lucide="repeat"></i>Toevoegen</button></div></form></div>
-<div class="card transactions"><div class="section-title">Vaste transacties</div>${data.recurring.length?data.recurring.map((r,i)=>`<div class="account"><div class="account-left"><div class="account-icon"><i data-lucide="repeat"></i></div><div><strong>${esc(r.description)}</strong><div class="small">Elke maand op dag ${r.day} · ${esc(r.category)} · ${esc(accountById(r.accountId)?.name||"-")}</div></div></div><div style="display:flex;align-items:center;gap:12px"><span class="${r.kind==="income"?"positive":"negative"}">${r.kind==="income"?"+":"-"}${euro(r.amount)}</span><button class="icon-btn danger" data-rec-delete="${i}"><i data-lucide="trash-2"></i></button></div></div>`).join(""):`<div class="empty">Nog geen terugkerende transacties.</div>`}</div>`;
+<div class="card transactions"><div class="section-title">Vaste transacties</div>${data.recurring.length?data.recurring.map((r,i)=>`<div class="account"><div class="account-left"><div class="account-icon"><i data-lucide="repeat"></i></div><div><strong>${esc(r.description)}</strong><div class="small">Elke maand op dag ${Number(r.day||1)} · ${esc(r.category)} · ${esc(accountById(r.accountId)?.name||"-")}</div></div></div><div style="display:flex;align-items:center;gap:12px"><span class="${r.kind==="income"?"positive":"negative"}">${r.kind==="income"?"+":"-"}${euro(r.amount)}</span><button class="icon-btn danger" data-rec-delete="${i}"><i data-lucide="trash-2"></i></button></div></div>`).join(""):`<div class="empty">Nog geen terugkerende transacties.</div>`}</div>
+${(()=>{
+  const deductions=(Array.isArray(data.transactions)?data.transactions:[])
+    .filter(t=>t.recurringId && t.kind==="expense")
+    .sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  return `<div class="card transactions"><div class="section-title">Afschrijvingen</div><div class="small" style="margin-bottom:12px">Hier zie je alleen vaste kosten die daadwerkelijk zijn verwerkt, op de vaste dag die je hebt ingesteld.</div>${deductions.length?`<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse"><thead><tr><th style="text-align:left;padding:8px 6px">Datum</th><th style="text-align:left;padding:8px 6px">Omschrijving</th><th style="text-align:left;padding:8px 6px">Rekening</th><th style="text-align:right;padding:8px 6px">Bedrag</th></tr></thead><tbody>${deductions.map(t=>`<tr><td style="padding:9px 6px;border-top:1px solid var(--border)">${new Date(t.date+"T12:00:00").toLocaleDateString("nl-NL")}</td><td style="padding:9px 6px;border-top:1px solid var(--border)">${esc(t.description)}</td><td style="padding:9px 6px;border-top:1px solid var(--border)">${esc(accountById(t.accountId)?.name||"-")}</td><td style="padding:9px 6px;border-top:1px solid var(--border);text-align:right" class="negative">-${euro(t.amount)}</td></tr>`).join("")}</tbody></table></div>`:`<div class="empty">Nog geen vaste kosten afgeschreven.</div>`}</div>`;
+})()}`;
 $("saveWeeklySalary").onclick=()=>{
   const amount=Number($("weeklySalaryAmount").value);
   const accountId=$("weeklySalaryAccount").value;
@@ -2153,7 +3015,7 @@ $("saveWeeklySalary").onclick=()=>{
 };
 let kind="expense";
 document.querySelectorAll("[data-reckind]").forEach(b=>b.onclick=()=>{kind=b.dataset.reckind;document.querySelectorAll("[data-reckind]").forEach(x=>x.classList.toggle("active",x===b))});
-$("recForm").onsubmit=e=>{e.preventDefault();const amount=Number($("recAmount").value),day=Number($("recDay").value);if(!Number.isFinite(amount)||amount<=0||day<1||day>28){notify("Controleer bedrag en dag.");return}data.recurring.push({id:uid(),description:$("recDesc").value.trim(),amount,category:$("recCat").value,accountId:$("recAcc").value,day,kind});saveAndRender()};
+$("recForm").onsubmit=e=>{e.preventDefault();const amount=Number($("recAmount").value);if(!Number.isFinite(amount)||amount<=0){notify("Controleer het bedrag.");return}const day=Math.min(31,Math.max(1,Math.floor(Number($("recDay").value)||1)));const description=$("recDesc").value.trim();if(!description){notify("Vul een omschrijving in.");return}data.recurring.push({id:uid(),description,amount,category:$("recCat").value,accountId:$("recAcc").value,day,kind});saveAndRender()};
 document.querySelectorAll("[data-rec-delete]").forEach(b=>b.onclick=()=>{if(confirm("Terugkerende transactie verwijderen?")){data.recurring.splice(Number(b.dataset.recDelete),1);saveAndRender()}});
 }
 
@@ -2257,7 +3119,109 @@ render();
 }
 init();
 </script>
+<style id="transaction-time-display">
+/* Kleine tijdweergave bij transactiedatum */
+.transaction-date{display:inline-flex;flex-direction:column;line-height:1.25;}
+.transaction-date small{font-size:9px;color:var(--muted);font-weight:500;margin-top:1px;}
+.dashboard-account-tx-row span{display:block;}
+@media(max-width:700px){
+  .transaction-date small{font-size:8px;}
+}
+</style>
+
+<style id="dashboard-recent-transactions-v2">
+/* Dashboard: maximaal 10 recente transacties, nieuwste bovenaan en duidelijke kleuren */
+#dashboard .recent-overview-grid .table td:last-child,
+#dashboard .recent-overview-grid .table td .positive{
+  color:var(--green) !important;
+  font-weight:650 !important;
+}
+#dashboard .recent-overview-grid .table td:last-child .negative,
+#dashboard .recent-overview-grid .table td .negative{
+  color:var(--red) !important;
+  font-weight:650 !important;
+}
+#dashboard .recent-overview-grid .table td{
+  font-size:11px;
+  padding:9px 7px;
+}
+#dashboard .recent-overview-grid .table th{
+  font-size:10px;
+  padding:8px 7px;
+}
+@media(max-width:700px){
+  #dashboard .recent-overview-grid .table td{font-size:9.5px;padding:7px 3px;}
+  #dashboard .recent-overview-grid .table th{font-size:9px;padding:7px 3px;}
+}
+</style>
+
+<style id="dashboard-recent-transactions-fix-v3">
+/* Dashboard recente transacties: inkomsten groen, uitgaven rood. */
+#dashboard .transactions .table td.positive{
+  color:var(--green) !important;
+  font-weight:650 !important;
+}
+#dashboard .transactions .table td.negative{
+  color:var(--red) !important;
+  font-weight:650 !important;
+}
+#dashboard .transactions .table td{font-size:11px;}
+#dashboard .transactions .table th{font-size:10px;}
+@media(max-width:700px){
+  #dashboard .transactions .table td{font-size:9.5px;}
+  #dashboard .transactions .table th{font-size:9px;}
+}
+</style>
+<style id="dashboard-revolut-match-abn">
+/* Revolut uitgeklapt visueel gelijk aan ABN Amro */
+.dashboard-revolut-summary{
+  background:color-mix(in srgb,var(--card) 97%,var(--soft)) !important;
+}
+.dashboard-revolut-summary:hover{
+  background:color-mix(in srgb,var(--card) 97%,var(--soft)) !important;
+}
+.dashboard-revolut-details-inner{
+  background:transparent !important;
+}
+</style>
 </body>
+
+<style id="dashboard-revolut-subaccount-transactions">
+.dashboard-revolut-subaccount{padding-bottom:2px;}
+.dashboard-revolut-subaccount + .dashboard-revolut-subaccount{margin-top:2px;}
+.revolut-subaccount-transactions{margin:0 0 5px 0;padding-left:0;}
+.revolut-subaccount-transactions .dashboard-account-tx-row{padding:6px 0 6px 10px;margin-left:0;border-bottom:1px solid var(--border);}
+.revolut-subaccount-transactions .dashboard-account-tx-row > div span{font-size:11px;}
+.dashboard-no-transactions{padding:4px 0 8px 10px;color:var(--muted);}
+</style>
+<style id="dashboard-account-details">
+.dashboard-abn-summary .account-left > div > strong{font-weight:400;}
+.dashboard-abn-details,.dashboard-revolut-details{width:100%;}
+.dashboard-abn-summary,.dashboard-revolut-summary{list-style:none;cursor:pointer;}
+.dashboard-abn-summary::-webkit-details-marker,.dashboard-revolut-summary::-webkit-details-marker{display:none;}
+.dashboard-abn-summary::after,.dashboard-revolut-summary::after{content:"";width:7px;height:7px;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(45deg);margin-left:8px;transition:transform .15s ease;}
+.dashboard-abn-details[open] .dashboard-abn-summary::after,.dashboard-revolut-details[open] .dashboard-revolut-summary::after{transform:rotate(225deg);}
+.dashboard-abn-details-inner,.dashboard-revolut-details-inner{padding-top:3px;}
+</style>
+
+<style id="dashboard-account-transactions">
+.dashboard-account-transactions{margin:5px 0 8px 48px;border-top:1px solid var(--border);padding-top:5px;}
+.dashboard-account-transactions-scroll{max-height:320px;overflow-y:auto;padding-right:5px;}
+.dashboard-account-tx-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;}
+.dashboard-account-tx-row:last-child{border-bottom:0;}
+.dashboard-account-tx-row strong{font-weight:600;}
+.dashboard-account-tx-row span{display:block;color:var(--muted);font-size:9px;margin-top:1px;}
+.dashboard-account-tx-row .positive{color:var(--green)!important;}
+.dashboard-account-tx-row .negative{color:var(--red)!important;}
+.revolut-last-transaction{margin-left:0;margin-top:8px;padding-top:8px;}
+.dashboard-subrow-title{font-size:10px;font-weight:600;margin-bottom:2px;}
+@media(max-width:700px){
+ .dashboard-account-transactions{margin-left:43px;}
+ .revolut-last-transaction{margin-left:0;}
+ .dashboard-account-tx-row{font-size:10px;padding:5px 0;}
+ .dashboard-account-tx-row span{font-size:8px;}
+}
+</style>
 
 <style id="dashboard-recurring-expanded">
 .dashboard-recurring-summary{overflow:hidden;}
@@ -2277,6 +3241,228 @@ init();
  .dashboard-recurring-metrics{grid-template-columns:1fr 1fr;gap:8px;}
  .dashboard-recurring-metric>div:nth-child(2){font-size:16px;}
  .dashboard-recurring-row{padding:9px 0;}
+}
+</style>
+
+<style id="dashboard-compact-selected-tiles">
+/* Compactere dashboardtegels: rekeningen, vaste kosten/loon, investeringen en DealPlugNL */
+#dashboard > .section-grid > .card:first-child{
+  padding:14px !important;
+}
+#dashboard > .section-grid > .card:first-child .section-title{
+  font-size:14px;
+  margin-bottom:9px;
+}
+#dashboard > .section-grid > .card:first-child .account-list{
+  gap:7px;
+}
+#dashboard > .section-grid > .card:first-child .account{
+  padding:8px 9px;
+  border-radius:11px;
+}
+#dashboard > .section-grid > .card:first-child .account-icon{
+  width:30px;
+  height:30px;
+  border-radius:9px;
+}
+#dashboard > .section-grid > .card:first-child .account-left{
+  gap:9px;
+  font-size:12px;
+}
+#dashboard > .section-grid > .card:first-child .small{
+  font-size:10px;
+}
+#dashboard > .section-grid > .card:first-child .amount{
+  font-size:13px;
+  padding:6px 2px 0;
+}
+
+#dashboard .dashboard-recurring-summary{
+  padding:15px !important;
+}
+#dashboard .dashboard-recurring-summary .section-title{
+  font-size:14px;
+  margin-bottom:8px;
+}
+#dashboard .dashboard-recurring-summary > .small{
+  font-size:11px;
+}
+#dashboard .dashboard-recurring-summary > div[style*="grid-template-columns:1fr 1fr"]{
+  gap:8px !important;
+  margin-top:10px !important;
+}
+#dashboard .dashboard-recurring-summary > div[style*="grid-template-columns:1fr 1fr"] > div{
+  padding:8px !important;
+  border-radius:10px !important;
+}
+#dashboard .dashboard-recurring-summary > div[style*="grid-template-columns:1fr 1fr"] > div .negative,
+#dashboard .dashboard-recurring-summary > div[style*="grid-template-columns:1fr 1fr"] > div .positive{
+  font-size:16px !important;
+}
+#dashboard .dashboard-recurring-summary > div[style*="grid-template-columns:1fr 1fr"] .small{
+  font-size:10px;
+}
+#dashboard .dashboard-recurring-summary > div[style*="border-top"]{
+  margin-top:9px !important;
+  padding-top:9px !important;
+}
+#dashboard .dashboard-recurring-summary > div[style*="border-top"] > .small{
+  font-size:10px !important;
+}
+#dashboard .dashboard-recurring-summary > div[style*="border-top"] > div:not(.small){
+  padding:6px 0 !important;
+  font-size:11px !important;
+}
+
+#dashboard .dashboard-crypto-pokemon-card{
+  padding:15px !important;
+}
+#dashboard .dashboard-crypto-pokemon-card .section-title{
+  font-size:14px;
+  margin-bottom:8px;
+}
+#dashboard .dashboard-crypto-pokemon-card > .small{
+  font-size:11px;
+}
+#dashboard .dashboard-crypto-pokemon-card .dashboard-investment-grid{
+  gap:7px !important;
+  margin-top:10px !important;
+}
+#dashboard .dashboard-crypto-pokemon-card .dashboard-investment-grid > div{
+  padding:8px !important;
+  border-radius:10px !important;
+}
+#dashboard .dashboard-crypto-pokemon-card .dashboard-investment-grid .small{
+  font-size:10px;
+}
+#dashboard .dashboard-crypto-pokemon-card .dashboard-investment-grid > div > div:last-child{
+  font-size:16px !important;
+  margin-top:2px !important;
+}
+#dashboard .dashboard-crypto-pokemon-card > div[style*="border-top"]{
+  margin-top:8px !important;
+  padding-top:8px !important;
+  gap:8px !important;
+}
+#dashboard .dashboard-crypto-pokemon-card > div[style*="border-top"] > div{
+  font-size:11px;
+}
+#dashboard .dashboard-crypto-pokemon-card > div[style*="border-top"] .small{
+  font-size:10px;
+}
+#dashboard .dashboard-crypto-pokemon-card > div[style*="border-top"] > div > div:last-child{
+  font-size:14px !important;
+  margin-top:2px !important;
+}
+
+#dashboard .dealplug-dashboard-card{
+  padding:15px !important;
+}
+#dashboard .dealplug-dashboard-card .section-title{
+  font-size:14px;
+  margin-bottom:8px;
+}
+#dashboard .dealplug-dashboard-card > .small{
+  font-size:11px;
+}
+#dashboard .dealplug-dashboard-card .stat-value{
+  font-size:20px !important;
+}
+#dashboard .dealplug-dashboard-card > div[style*="align-items:flex-end"]{
+  margin-top:9px !important;
+  gap:9px !important;
+}
+#dashboard .dealplug-dashboard-card > div[style*="align-items:flex-end"] .small{
+  font-size:10px;
+}
+
+@media(max-width:700px){
+  #dashboard > .section-grid > .card:first-child{padding:12px !important;}
+  #dashboard .dashboard-recurring-summary,
+  #dashboard .dashboard-crypto-pokemon-card,
+  #dashboard .dealplug-dashboard-card{padding:12px !important;}
+  #dashboard .dashboard-recurring-summary > div[style*="grid-template-columns:1fr 1fr"] > div{padding:7px !important;}
+  #dashboard .dashboard-recurring-summary > div[style*="grid-template-columns:1fr 1fr"] > div .negative,
+  #dashboard .dashboard-recurring-summary > div[style*="grid-template-columns:1fr 1fr"] > div .positive{font-size:15px !important;}
+  #dashboard .dashboard-crypto-pokemon-card .dashboard-investment-grid > div{padding:7px !important;}
+  #dashboard .dashboard-crypto-pokemon-card .dashboard-investment-grid > div > div:last-child{font-size:15px !important;}
+  #dashboard .dealplug-dashboard-card .stat-value{font-size:18px !important;}
+}
+</style>
+
+<style id="quick-expense-compact">
+#dashboard .quick-grid{gap:8px!important}
+#dashboard .quick-grid .quick-btn{min-height:92px!important;padding:10px!important;border-radius:12px!important}
+#dashboard .quick-grid .quick-btn svg{width:20px!important;height:20px!important}
+#dashboard .quick-grid .quick-btn strong{font-size:13px!important}
+#dashboard .quick-grid .quick-btn .small{font-size:10px!important}
+@media(max-width:700px){
+ #dashboard .quick-grid{gap:7px!important}
+ #dashboard .quick-grid .quick-btn{min-height:78px!important;padding:8px!important}
+ #dashboard .quick-grid .quick-btn strong{font-size:12px!important}
+ #dashboard .quick-grid .quick-btn .small{font-size:9px!important}
+ #dashboard .quick-grid .quick-btn svg{width:18px!important;height:18px!important}
+}
+</style>
+
+<style id="accounts-revolut-always-visible-v46">
+/* Compacte tegel voor tabblad Rekeningen */
+#accounts .account-snapshots-card{
+  max-width:820px;
+  padding:15px;
+}
+#accounts .account-snapshots-card .section-title{
+  font-size:14px;
+  margin-bottom:9px;
+}
+#accounts .account-snapshots-card > .small{
+  font-size:11px;
+  margin-bottom:8px !important;
+}
+#accounts .account-snapshots-card .field{
+  margin-bottom:9px !important;
+}
+#accounts .account-snapshot-list{
+  font-size:12px;
+}
+#accounts .snapshot-month{
+  padding:9px 10px;
+  border-radius:11px;
+}
+#accounts .snapshot-month-head{
+  margin-bottom:5px;
+}
+#accounts .snapshot-month-head strong{font-size:13px}
+#accounts .snapshot-row{
+  margin:4px 0;
+  font-size:12px;
+}
+#accounts .snapshot-input-wrap{
+  width:102px;
+  min-height:32px;
+  padding:3px 6px;
+}
+#accounts .snapshot-input-wrap input{font-size:12px}
+#accounts .revolut-main-row{
+  font-size:12px;
+}
+#accounts #revolutSubaccounts{
+  display:block !important;
+  padding-left:16px !important;
+  padding-bottom:2px !important;
+}
+#accounts #revolutSubaccounts .snapshot-row{
+  padding:2px 0;
+}
+@media(max-width:700px){
+  #accounts .account-snapshots-card{
+    max-width:none;
+    padding:12px;
+  }
+  #accounts .snapshot-month{padding:8px 9px}
+  #accounts .snapshot-row{font-size:11px}
+  #accounts .snapshot-input-wrap{width:92px;min-height:30px}
+  #accounts #revolutSubaccounts{padding-left:10px !important}
 }
 </style>
 </html>
@@ -2356,4 +3542,87 @@ init();
 
 <style>
 @media(max-width:700px){.dashboard-recurring-summary > div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr 1fr !important;gap:8px !important}.dashboard-recurring-summary{overflow:hidden}}
+</style>
+<style id="compact-other-tabs">
+/* Zelfde compacte invoerstijl als Transacties voor de overige tabbladen */
+#crypto .card.transactions,
+#dealplug .card,
+#goals .card:first-of-type,
+#recurring .card{
+  padding:12px;
+}
+#crypto .form-grid,
+#dealplug .form-grid,
+#recurring .form-grid{
+  gap:8px;
+}
+#goals .goal-form-grid{
+  gap:8px;
+}
+#crypto .field label,
+#dealplug .field label,
+#goals .field label,
+#recurring .field label{
+  font-size:12px;
+  margin-bottom:4px;
+}
+#crypto .field input,
+#crypto .field select,
+#dealplug .field input,
+#dealplug .field select,
+#goals .field input,
+#goals .field select,
+#recurring .field input,
+#recurring .field select{
+  padding:7px 9px;
+  min-height:34px;
+  font-size:12px;
+  border-radius:9px;
+}
+#crypto .form-actions,
+#dealplug .form-actions,
+#goals .form-actions,
+#recurring .form-actions{
+  margin-top:10px;
+  gap:6px;
+}
+#crypto .btn,
+#dealplug .btn,
+#goals .btn,
+#recurring .btn{
+  padding:8px 11px;
+  font-size:12px;
+}
+#crypto .toggle,
+#dealplug .toggle,
+#recurring .toggle{
+  margin-bottom:9px;
+}
+#crypto .toggle button,
+#dealplug .toggle button,
+#recurring .toggle button{
+  padding:7px 10px;
+  font-size:12px;
+}
+#goals .goal{
+  padding:10px;
+}
+@media(max-width:700px){
+  #crypto .card.transactions,
+  #dealplug .card,
+  #goals .card:first-of-type,
+  #recurring .card{padding:11px;}
+  #crypto .form-grid,
+  #dealplug .form-grid,
+  #recurring .form-grid,
+  #goals .goal-form-grid{gap:7px;}
+  #crypto .field input,
+  #crypto .field select,
+  #dealplug .field input,
+  #dealplug .field select,
+  #goals .field input,
+  #goals .field select,
+  #recurring .field input,
+  #recurring .field select{padding:7px 8px;min-height:33px;}
+}
 </style>
