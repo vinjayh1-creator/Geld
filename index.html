@@ -1203,6 +1203,34 @@ nav button.active{background:var(--soft);color:var(--primary);}
 #dealplug #dpSaleFields .small{line-height:1.45}
 </style>
 
+<style id="dashboard-percentage-wealth-v2">
+.dashboard-stat-change{margin-top:7px;display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;line-height:1.1;padding:3px 6px;border-radius:999px;background:var(--soft);color:var(--muted)}
+.dashboard-stat-change.up{color:var(--green)}
+.dashboard-stat-change.down{color:var(--red)}
+.dashboard-stat-change.flat{color:var(--muted)}
+.dashboard-stat-change svg{width:11px;height:11px}
+.wealth-development-card{margin-top:16px;}
+.wealth-development-layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(190px,.5fr);gap:20px;align-items:center}
+.wealth-chart{height:145px;min-width:0;position:relative}
+.wealth-chart svg{width:100%;height:100%;display:block;overflow:visible}
+.wealth-summary{display:grid;gap:9px}
+.wealth-summary-item{border:1px solid var(--border);border-radius:11px;padding:9px 10px;background:var(--card)}
+.wealth-summary-item .small{font-size:10px}
+.wealth-summary-item strong{display:block;margin-top:3px;font-size:13px;font-weight:600}
+.wealth-summary-change{display:inline-flex;align-items:center;gap:3px;font-size:9px!important;padding:2px 5px;border-radius:999px;margin-top:4px}
+@media(max-width:700px){
+  .dashboard-stat-change{font-size:9px;padding:2px 5px}
+  .dashboard-stat-change svg{width:10px;height:10px}
+  .wealth-development-card{margin-top:12px}
+  .wealth-development-layout{grid-template-columns:1fr;gap:12px}
+  .wealth-chart{height:125px}
+  .wealth-summary{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .wealth-summary-item{padding:8px 7px}
+  .wealth-summary-item .small{font-size:9px}
+  .wealth-summary-item strong{font-size:11px}
+}
+</style>
+
 <style id="compact-wealth-change-badge">
 /* Compact percentage badge in Vermogensontwikkeling */
 .wealth-change-badge{
@@ -1561,15 +1589,83 @@ const compactAccountTransaction=(t)=>{
   return `<div class="dashboard-account-tx-row"><div><strong>${esc(t.description||"Transactie")}</strong><span>${new Date(t.date).toLocaleDateString("nl-NL",{day:"2-digit",month:"2-digit",year:"numeric"})}${sourceText}</span></div><strong class="${cls}">${sign}${euro(amount)}</strong></div>`;
 };
 
+// Percentages t.o.v. de vorige maand voor de vier hoofdtegels.
+const previousDashboardDate=new Date(currentMonth);
+previousDashboardDate.setMonth(previousDashboardDate.getMonth()-1);
+const previousDashboardKey=monthKey(previousDashboardDate);
+const previousDashboardSnapshot=data.accountSnapshots?.[previousDashboardKey]||null;
+const monthTotalsForDashboard=(key)=>{
+  const normal=(Array.isArray(data.transactions)?data.transactions:[]).filter(t=>monthKey(t.date)===key);
+  const dp=(Array.isArray(data.dealplug?.entries)?data.dealplug.entries:[]).filter(e=>monthKey(e.date)===key);
+  const inc=normal.filter(t=>t.kind==="income").reduce((a,t)=>a+Number(t.amount||0),0)+dp.filter(e=>e.kind==="income").reduce((a,e)=>a+Number(e.amount||0),0);
+  const out=normal.filter(t=>t.kind==="expense").reduce((a,t)=>a+Number(t.amount||0),0)+dp.reduce((a,e)=>{
+    if(e.dealplugSale) return a+Number(e.cost||0);
+    if(e.kind==="expense"||e.kind==="cost"||e.kind==="kosten") return a+Number(e.amount||0);
+    return a;
+  },0);
+  return {income:inc,expenses:out,net:inc-out};
+};
+const previousDashboardTotals=monthTotalsForDashboard(previousDashboardKey);
+const previousAccountStand=previousDashboardSnapshot
+  ? Number(previousDashboardSnapshot.acc1||0)+revolutTotal(previousDashboardSnapshot,previousDashboardKey)
+  : null;
+const previousCash=previousAccountStand===null?null:previousAccountStand+(previousDashboardTotals.income-previousDashboardTotals.expenses);
+const pctChange=(current,previous)=>{
+  if(previous===null || previous===undefined || !Number.isFinite(previous) || previous===0) return null;
+  return ((current-previous)/Math.abs(previous))*100;
+};
+const dashboardPercentages={
+  cash:pctChange(cash,previousCash),
+  income:pctChange(income,previousDashboardTotals.income),
+  expenses:pctChange(expenses,previousDashboardTotals.expenses),
+  net:pctChange(net,previousDashboardTotals.net)
+};
+const dashboardPctBadge=(pct,mode="normal")=>{
+  if(pct===null) return `<span class="dashboard-stat-change flat">— geen vorige maand</span>`;
+  const rounded=Math.round(pct*10)/10;
+  const positive=rounded>0;
+  const negative=rounded<0;
+  const cls=positive?(mode==="expense"?"down":"up"):(negative?(mode==="expense"?"up":"down"):"flat");
+  const icon=positive?"trending-up":negative?"trending-down":"minus";
+  return `<span class="dashboard-stat-change ${cls}"><i data-lucide="${icon}"></i>${positive?"+":""}${rounded.toFixed(1).replace(".",",")}%</span>`;
+};
+
+// Vermogensontwikkeling: laatste 6 beschikbare maanden op basis van ABN + Revolut.
+const wealthMonths=[];
+for(let i=5;i>=0;i--){
+  const d=new Date(currentMonth); d.setMonth(d.getMonth()-i);
+  const key=monthKey(d); const snap=data.accountSnapshots?.[key];
+  if(snap && (Object.prototype.hasOwnProperty.call(snap,"acc1")||Object.prototype.hasOwnProperty.call(snap,"acc4")||snap.revolutSubaccounts)){
+    wealthMonths.push({key,label:d.toLocaleDateString("nl-NL",{month:"short"}),value:Number(snap.acc1||0)+revolutTotal(snap,key)});
+  }
+}
+if(!wealthMonths.length) wealthMonths.push({key:dashboardSnapshotKey,label:new Date(currentMonth).toLocaleDateString("nl-NL",{month:"short"}),value:accountStand});
+const wealthValues=wealthMonths.map(x=>x.value);
+const wealthMin=Math.min(...wealthValues), wealthMax=Math.max(...wealthValues);
+const wealthRange=Math.max(1,wealthMax-wealthMin);
+const wealthWidth=720, wealthHeight=145, padX=18, padY=18;
+const wealthPoints=wealthMonths.map((x,i)=>{
+  const xPos=wealthMonths.length===1?wealthWidth/2:padX+(i/(wealthMonths.length-1))*(wealthWidth-padX*2);
+  const yPos=padY+(wealthMax-x.value)/wealthRange*(wealthHeight-padY*2);
+  return {x:xPos,y:yPos,label:x.label,value:x.value};
+});
+const wealthPolyline=wealthPoints.map(p=>`${p.x},${p.y}`).join(" ");
+const wealthArea=wealthPoints.length>1?`${wealthPoints[0].x},${wealthHeight-padY} ${wealthPolyline} ${wealthPoints[wealthPoints.length-1].x},${wealthHeight-padY}`:"";
+const wealthPrevious=wealthMonths.length>1?wealthMonths[wealthMonths.length-2].value:null;
+const wealthCurrent=wealthMonths[wealthMonths.length-1].value;
+const wealthDifference=wealthPrevious===null?null:wealthCurrent-wealthPrevious;
+const wealthPct=wealthPrevious===null||wealthPrevious===0?null:(wealthDifference/Math.abs(wealthPrevious))*100;
+const wealthHighest=wealthMax, wealthLowest=wealthMin;
+
 const dashboardSnapshotLabel=new Date(Number(dashboardSnapshotKey.slice(0,4)),Number(dashboardSnapshotKey.slice(5,7))-1,1).toLocaleDateString("nl-NL",{month:"long",year:"numeric"});
 $("dashboard").innerHTML=`
 <div class="topbar"><div><h1>Dashboard</h1><div class="subtitle">Je financiële overzicht</div></div>
 <div class="month-nav"><button class="icon-btn" id="prevMonth"><i data-lucide="chevron-left"></i></button><strong style="min-width:145px;text-align:center;text-transform:capitalize">${monthName()}</strong><button class="icon-btn" id="nextMonth"><i data-lucide="chevron-right"></i></button></div></div>
 <div class="cards">
-<div class="card"><div class="stat-label"><i data-lucide="wallet"></i>Beschikbaar geld</div><div class="stat-value">${protectedEuro(cash)}</div></div>
-<div class="card"><div class="stat-label"><i data-lucide="arrow-down-left"></i>Deze maand binnen</div><div class="stat-value positive">${protectedEuro(income)}</div></div>
-<div class="card"><div class="stat-label"><i data-lucide="arrow-up-right"></i>Deze maand eruit</div><div class="stat-value negative">${protectedEuro(expenses)}</div></div>
-<div class="card"><div class="stat-label"><i data-lucide="${net>=0?"trending-up":"trending-down"}"></i>Deze maand saldo</div><div class="stat-value ${net>=0?"positive":"negative"}">${protectedEuro(net)}</div></div>
+<div class="card"><div class="stat-label"><i data-lucide="wallet"></i>Beschikbaar geld</div><div class="stat-value">${protectedEuro(cash)}</div>${dashboardPctBadge(dashboardPercentages.cash)}</div>
+<div class="card"><div class="stat-label"><i data-lucide="arrow-down-left"></i>Deze maand binnen</div><div class="stat-value positive">${protectedEuro(income)}</div>${dashboardPctBadge(dashboardPercentages.income)}</div>
+<div class="card"><div class="stat-label"><i data-lucide="arrow-up-right"></i>Deze maand eruit</div><div class="stat-value negative">${protectedEuro(expenses)}</div>${dashboardPctBadge(dashboardPercentages.expenses,"expense")}</div>
+<div class="card"><div class="stat-label"><i data-lucide="${net>=0?"trending-up":"trending-down"}"></i>Deze maand saldo</div><div class="stat-value ${net>=0?"positive":"negative"}">${protectedEuro(net)}</div>${dashboardPctBadge(dashboardPercentages.net)}</div>
 </div>
 </div>
 <div class="section-grid">
@@ -1602,26 +1698,27 @@ $("dashboard").innerHTML=`
 </div>
 </details>
 </div>
-${(()=>{
-  const currentTotal=Number(dashboardSnapshot.acc1||0)+revolutTotal(dashboardSnapshot,dashboardSnapshotKey);
-  const previousDate=new Date(currentMonth);
-  previousDate.setMonth(previousDate.getMonth()-1);
-  const previousKey=monthKey(previousDate);
-  const previousSnapshot=data.accountSnapshots?.[previousKey];
-  if(!previousSnapshot){
-    return '<div class="account-change flat"><i data-lucide="minus"></i><span>Geen vorige maand beschikbaar</span></div>';
-  }
-  const previousTotal=Number(previousSnapshot.acc1||0)+revolutTotal(previousSnapshot,previousKey);
-  const difference=currentTotal-previousTotal;
-  if(difference>0){
-    return `<div class="account-change up wealth-change-badge"><i data-lucide="trending-up"></i><span>${protectedEuro(difference)} meer dan vorige maand</span></div>`;
-  }
-  if(difference<0){
-    return `<div class="account-change down wealth-change-badge"><i data-lucide="trending-down"></i><span>${protectedEuro(Math.abs(difference))} minder dan vorige maand</span></div>`;
-  }
-  return '<div class="account-change flat"><i data-lucide="minus"></i><span>Gelijk aan vorige maand</span></div>';
-})()}
 </div>
+</div>
+<div class="card wealth-development-card">
+  <div class="section-title"><span>Vermogensontwikkeling</span><span class="badge">Laatste maanden</span></div>
+  <div class="small" style="margin-bottom:10px">Ontwikkeling van je ABN- en Revolut-vermogen op basis van je opgeslagen maandstanden.</div>
+  <div class="wealth-development-layout">
+    <div class="wealth-chart">
+      <svg viewBox="0 0 ${wealthWidth} ${wealthHeight}" preserveAspectRatio="none" aria-label="Vermogensontwikkeling grafiek">
+        <line x1="${padX}" y1="${wealthHeight-padY}" x2="${wealthWidth-padX}" y2="${wealthHeight-padY}" stroke="var(--border)" stroke-width="1"/>
+        ${wealthPoints.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="3.5" fill="var(--primary)"/>`).join("")}
+        ${wealthArea?`<polygon points="${wealthArea}" fill="var(--soft)" opacity="0.75"/>`:""}
+        ${wealthPolyline?`<polyline points="${wealthPolyline}" fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`:""}
+        ${wealthPoints.map(p=>`<text x="${p.x}" y="${wealthHeight-2}" text-anchor="middle" fill="var(--muted)" font-size="10">${esc(p.label)}</text>`).join("")}
+      </svg>
+    </div>
+    <div class="wealth-summary">
+      <div class="wealth-summary-item"><div class="small">Verandering t.o.v. vorige maand</div><strong>${wealthDifference===null?"—":`${wealthDifference>=0?"+":""}${euro(wealthDifference)}`}</strong>${wealthPct===null?"":`<span class="wealth-summary-change ${wealthPct>=0?"up":"down"}" style="color:${wealthPct>=0?"var(--green)":"var(--red)"}">${wealthPct>=0?"+":""}${wealthPct.toFixed(1).replace(".",",")}%</span>`}</div>
+      <div class="wealth-summary-item"><div class="small">Hoogste stand</div><strong>${protectedEuro(wealthHighest)}</strong></div>
+      <div class="wealth-summary-item"><div class="small">Laagste stand</div><strong>${protectedEuro(wealthLowest)}</strong></div>
+    </div>
+  </div>
 </div>
 <div class="card transactions"><div class="section-title">Snelle uitgave</div>
 <div class="quick-grid">
